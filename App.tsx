@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Button, ThemeProvider } from '@rneui/themed';
 import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
@@ -10,7 +11,7 @@ import {
   Text,
   useColorScheme,
   View,
-  Button,
+
   TouchableOpacity
 } from 'react-native';
 
@@ -21,6 +22,8 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+
+import BtnSection from './components/btnSection'
 
 const Stack = createNativeStackNavigator();
 
@@ -51,32 +54,32 @@ function Welcome({ navigation }: { navigation: any }) {
   );
 }
 
-function DetailsScreen({ navigation }: { navigation: any }) {
+function Details({ navigation }: { navigation: any }) {
   return (
     <View style={styles.sectionContainer}>
       <SafeAreaView style={styles.container}>
         <View>
-
         </View>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.btn}
-            onPress={() => navigation.navigate('Welcome')}>
-            <Text style={styles.btnText}>次に進む</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.btn, styles.prevBtn]}
-            onPress={() => navigation.navigate('Welcome')}>
-            <Text style={[styles.btnText, styles.prevBtnText]}>戻る</Text>
-          </TouchableOpacity>
-        </View>
+        <BtnSection prevBtn='Welcome' nextBtn='Test' navigation={navigation} />
       </SafeAreaView>
     </View>
   );
 }
-
+function Test({ navigation }: { navigation: any }) {
+  return (
+    <View style={styles.sectionContainer}>
+      <SafeAreaView style={styles.container}>
+        <View>
+          <Text>test</Text>
+          <ThemeProvider>
+            <Button title="Hey!" />
+          </ThemeProvider>
+        </View>
+        <BtnSection prevBtn='Details' nextBtn='Test' navigation={navigation} />
+      </SafeAreaView>
+    </View >
+  )
+}
 
 const styles = StyleSheet.create({
 
@@ -90,7 +93,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     // backgroundColor: "tomato",
     flex: 1,
-    gap: 10, // 子要素間のスペースを10ピクセルに設定します
+    gap: 10,
   },
   ttlSection: {
 
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   tosText: {
-    paddingTop: 8,
+    paddingTop: 4,
     height: 60,
     fontSize: 12,
     textAlign: "center",
@@ -161,7 +164,8 @@ export default function App() {
         initialRouteName="Welcome"
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+        <Stack.Screen name="Details" component={Details} />
+        <Stack.Screen name="Test" component={Test} />
       </Stack.Navigator>
     </NavigationContainer>
   );
