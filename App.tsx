@@ -56,13 +56,20 @@ function Welcome({ navigation }: { navigation: any }) {
 
 function Details({ navigation }: { navigation: any }) {
   return (
-    <View style={styles.sectionContainer}>
-      <SafeAreaView style={styles.container}>
-        <View>
-        </View>
-        <BtnSection prevBtn='Welcome' nextBtn='Test' navigation={navigation} />
-      </SafeAreaView>
-    </View>
+    <>
+      <View>
+        <SafeAreaView>
+          <Text>aaa</Text>
+        </SafeAreaView>
+      </View>
+      <View style={styles.sectionContainer}>
+        <SafeAreaView style={styles.container}>
+          <View>
+          </View>
+          <BtnSection prevBtn='Welcome' nextBtn='Test' navigation={navigation} />
+        </SafeAreaView>
+      </View>
+    </>
   );
 }
 function Test({ navigation }: { navigation: any }) {
@@ -82,7 +89,11 @@ function Test({ navigation }: { navigation: any }) {
 }
 
 const styles = StyleSheet.create({
-
+  
+  aaa: {
+    backgroundColor: "red",
+    height: 100,
+  },
   sectionContainer: {
     flex: 1,
     backgroundColor: "#fff",
