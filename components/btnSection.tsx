@@ -10,7 +10,7 @@ import {
     Text,
     useColorScheme,
     View,
-    Button,
+
     TouchableOpacity
 } from 'react-native';
 
@@ -24,38 +24,48 @@ import {
 
 const Stack = createNativeStackNavigator();
 
+
 type btnSectionProps = {
     prevBtn: string,
     nextBtn: string,
 }
 
-export default function btnSection({ prevBtn, nextBtn, navigation }: btnSectionProps & { navigation: any }) {
+export default function BtnSection({ prevBtn, nextBtn, navigation, setProgress }: btnSectionProps & { navigation: any, setProgress: (value: ((prevState: number) => number)) => void }) {
     return (
-        <View style={styles.btnContainer}>
+        <View style={styles.btnWrap}>
             <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.btn}
-                onPress={() => navigation.navigate(nextBtn)}>
+                onPress={() => {
+                    navigation.navigate(nextBtn);
+                    setProgress(prevProgress => prevProgress + 1);
+                }}>
                 <Text style={styles.btnText}>次に進む</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 activeOpacity={0.8}
                 style={[styles.btn, styles.prevBtn]}
-                onPress={() => navigation.navigate(prevBtn)}>
+                onPress={() => {
+                    navigation.navigate(prevBtn);
+                    setProgress(prevProgress => prevProgress > 0 ? prevProgress - 1 : 0);
+                }}>
                 <Text style={[styles.btnText, styles.prevBtnText]}>戻る</Text>
-
             </TouchableOpacity>
         </View>
     )
 }
 
-const styles = StyleSheet.create({
-    btnContainer: {
 
-        // height: 200,
+const styles = StyleSheet.create({
+    btnWrap: {
+        // backgroundColor: "tomato",
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingTop: 16,
+        paddingBottom: 8,
         gap: 8,
-        padding: 8,
-        // backgroundColor: "blue",
+    },
+    btnContainer: {
     },
     btn: {
         backgroundColor: "#333",
