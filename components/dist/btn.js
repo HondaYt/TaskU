@@ -1,43 +1,55 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 exports.__esModule = true;
 var react_1 = require("react");
 var native_stack_1 = require("@react-navigation/native-stack");
 var react_native_1 = require("react-native");
 var Stack = native_stack_1.createNativeStackNavigator();
-function btnSection(props, _a) {
-    var navigation = _a.navigation;
-    return (react_1["default"].createElement(react_native_1.View, { style: styles.btnContainer },
-        react_1["default"].createElement(react_native_1.TouchableOpacity, { activeOpacity: 0.8, style: styles.btn, onPress: function () { return navigation.navigate(props.nextBtn); } },
-            react_1["default"].createElement(react_native_1.Text, { style: styles.btnText }, "\u6B21\u306B\u9032\u3080")),
-        react_1["default"].createElement(react_native_1.TouchableOpacity, { activeOpacity: 0.8, style: [styles.btn, styles.prevBtn], onPress: function () { return navigation.navigate(props.prevBtn); } },
-            react_1["default"].createElement(react_native_1.Text, { style: [styles.btnText, styles.prevBtnText] }, "\u623B\u308B"))));
+function Btn(props) {
+    return (react_1["default"].createElement(react_native_1.TouchableOpacity, { activeOpacity: 0.9, style: __assign(__assign({}, props.prev ? styles.prevBtn : styles.btn), props.style), 
+        // style={[styles.btn, props.style]}
+        onPress: props.onPress },
+        react_1["default"].createElement(react_native_1.Text, { style: __assign({}, props.prev ? styles.prevText : styles.text) }, props.title)));
 }
-exports["default"] = btnSection;
+exports["default"] = Btn;
 var styles = react_native_1.StyleSheet.create({
-    btnContainer: {
-        // height: 200,
-        gap: 8,
-        padding: 8
-    },
     btn: {
+        // width: '100%',
+        // flex: 1,
+        height: 60,
         backgroundColor: "#333",
         borderRadius: 8,
-        height: 60,
         justifyContent: "center",
         alignItems: "center"
     },
-    btnText: {
+    text: {
         color: "#fff",
         fontWeight: "600",
         fontSize: 20
     },
-    prevBtn: {
-        backgroundColor: "#fff",
-        borderColor: "#555",
-        borderWidth: 3
-    },
-    prevBtnText: {
+    prevText: {
         color: "#555",
-        fontSize: 18
+        fontWeight: "600",
+        fontSize: 20
+    },
+    prevBtn: {
+        width: 60,
+        borderWidth: 3,
+        borderColor: "#555",
+        backgroundColor: "#fff",
+        borderRadius: 8,
+        height: 60,
+        justifyContent: "center",
+        alignItems: "center"
     }
 });
