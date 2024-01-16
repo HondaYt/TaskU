@@ -18,6 +18,7 @@ import {
 import Welcome from 'screens/welcome'
 import Top from 'screens/top'
 import Register from 'screens/register'
+
 const Stack = createNativeStackNavigator();
 
 const styles = StyleSheet.create({

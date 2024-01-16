@@ -23,8 +23,10 @@ const Stack = createNativeStackNavigator();
 type registerIndicatorProps = {
     progress: number;
     maxProgress: number;
+    progressText: string;
 };
-export default function RegisterIndicator({ progress, maxProgress }: registerIndicatorProps) {
+
+export default function RegisterIndicator({ progress, maxProgress, progressText }: registerIndicatorProps) {
     const widthAnim = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
@@ -38,7 +40,7 @@ export default function RegisterIndicator({ progress, maxProgress }: registerInd
 
     return (
         <Animated.View style={styles.registerIndicator}>
-            <Text style={styles.progressText}>まずはあなたのことを{"\n"}教えてください！</Text>
+            <View style={styles.textWrap}><Text style={styles.progressText}>{progressText}</Text></View>
             <View style={styles.progressBar}>
                 <Animated.View style={{
                     ...styles.progressIndicator,
@@ -57,6 +59,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 8,
         textAlign: 'center',
+
+    },
+    textWrap: {
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     progressBar: {
         height: 8,
@@ -70,6 +78,6 @@ const styles = StyleSheet.create({
     },
     registerIndicator: {
         backgroundColor: '#fff',
-        // paddingTop: StatusBar.currentHeight,
+        // paddingBottom: 16,
     },
 });

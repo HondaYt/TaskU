@@ -19,29 +19,40 @@ import Welcome from 'screens/welcome'
 const Stack = createNativeStackNavigator();
 
 type btnProps = {
-    prev?: boolean;
     style?: any;
     onPress: () => void;
     title: string;
+    prev?: boolean;
+    disabled?: boolean; // 追加
 };
 
 export default function Btn(props: btnProps) {
+    const { prev, style, onPress, title, disabled } = props;
     return (
         <TouchableOpacity
             activeOpacity={0.9}
-            style={{ ...props.prev ? styles.prevBtn : styles.btn, ...props.style }}
-            // style={[styles.btn, props.style]}
-            onPress={props.onPress}>
+            style={[
+                prev ? styles.prevBtn : styles.btn,
+                style,
+                disabled && styles.disabledBtn // 追加: 無効状態のスタイル
+            ]}
+            onPress={disabled ? undefined : onPress} // 追加: 無効の場合は onPress を無視
+            disabled={disabled} // 追加
+        >
             <Text
-                style={{ ...props.prev ? styles.prevText : styles.text }}
-            >{props.title}</Text>
+                style={[
+                    prev ? styles.prevText : styles.text,
+                    disabled && styles.disabledText // 追加: 無効状態のテキストスタイル
+                ]}
+            >
+                {title}
+            </Text>
         </TouchableOpacity>
-    )
+    );
 }
+
 const styles = StyleSheet.create({
     btn: {
-        // width: '100%',
-        // flex: 1,
         height: 60,
         backgroundColor: "#333",
         borderRadius: 8,
@@ -69,5 +80,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         // backgroundColor: 'tomato',
+    },
+    disabledBtn: {
+        // 無効状態のボタンのスタイル
+        backgroundColor: "#ccc",
+        // 他のスタイル属性
+    },
+    disabledText: {
+        // 無効状態のテキストのスタイル
+        color: "#999",
+        // 他のスタイル属性
     },
 });

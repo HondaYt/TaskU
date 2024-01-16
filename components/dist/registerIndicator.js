@@ -17,7 +17,7 @@ var native_stack_1 = require("@react-navigation/native-stack");
 var react_native_1 = require("react-native");
 var Stack = native_stack_1.createNativeStackNavigator();
 function RegisterIndicator(_a) {
-    var progress = _a.progress, maxProgress = _a.maxProgress;
+    var progress = _a.progress, maxProgress = _a.maxProgress, progressText = _a.progressText;
     var widthAnim = react_2.useRef(new react_native_1.Animated.Value(0)).current;
     react_2.useEffect(function () {
         react_native_1.Animated.timing(widthAnim, {
@@ -27,10 +27,8 @@ function RegisterIndicator(_a) {
         }).start();
     }, [progress, maxProgress, widthAnim]);
     return (react_1["default"].createElement(react_native_1.Animated.View, { style: styles.registerIndicator },
-        react_1["default"].createElement(react_native_1.Text, { style: styles.progressText },
-            "\u307E\u305A\u306F\u3042\u306A\u305F\u306E\u3053\u3068\u3092",
-            "\n",
-            "\u6559\u3048\u3066\u304F\u3060\u3055\u3044\uFF01"),
+        react_1["default"].createElement(react_native_1.View, { style: styles.textWrap },
+            react_1["default"].createElement(react_native_1.Text, { style: styles.progressText }, progressText)),
         react_1["default"].createElement(react_native_1.View, { style: styles.progressBar },
             react_1["default"].createElement(react_native_1.Animated.View, { style: __assign(__assign({}, styles.progressIndicator), { width: widthAnim.interpolate({
                         inputRange: [0, 100],
@@ -44,6 +42,11 @@ var styles = react_native_1.StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 8,
         textAlign: 'center'
+    },
+    textWrap: {
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     progressBar: {
         height: 8,

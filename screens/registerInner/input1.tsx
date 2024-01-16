@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -8,64 +8,173 @@ import {
     SafeAreaView,
     ScrollView,
     StatusBar,
+    Animated,
     StyleSheet,
     Text,
     useColorScheme,
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    Dimensions,
 } from 'react-native';
 
 import Welcome from 'screens/welcome'
 import Btn from 'components/btn'
+import AttributeBtn from 'components/attributeBtn'
 const Stack = createNativeStackNavigator();
 
-export default function registerInput1({ navigation }: any) {
+const { width } = Dimensions.get('window');
+// ボタンの幅（または高さ）を計算
+const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
+
+interface RegisterInput1Props {
+    setIsButtonDisabled: (disabled: boolean) => void;
+}
+
+export default function registerInput1({ setIsButtonDisabled }: RegisterInput1Props) {
+    const [selectedAttributes, setSelectedAttributes] = useState<{ [category: string]: string | undefined }>({});
+
+    useEffect(() => {
+        // 'living' 属性が選択されている場合のみボタンを有効にする
+        setIsButtonDisabled(!selectedAttributes['living']);
+    }, [selectedAttributes, setIsButtonDisabled]);
+
+    // 属性とそのカテゴリのマッピング
+    const attributes = {
+        'living': ['一人暮らし', '同居中'],
+        'status': selectedAttributes['living'] ? ['学生', '社会人', '主婦'] : [],
+        // 他のカテゴリと属性を追加
+    };
+
+    const handleAttributePress = (category: string, attribute: string) => {
+        setSelectedAttributes(prevSelectedAttributes => {
+            const newAttributes = { ...prevSelectedAttributes };
+            const isAlreadySelected = prevSelectedAttributes[category] === attribute;
+            newAttributes[category] = isAlreadySelected ? undefined : attribute;
+
+            // 'living' カテゴリの選択を解除した場合、'status' カテゴリもクリアする
+            if (category === 'living' && isAlreadySelected) {
+                newAttributes['status'] = undefined;
+            }
+
+            return newAttributes;
+        });
+    };
+
+
+
+    const statusFadeAnim = useRef(new Animated.Value(0)).current; // 初期値は0（透明）
+
+    useEffect(() => {
+        // livingが選択されたらstatusカテゴリのフェードインアニメーションを開始
+        if (selectedAttributes['living']) {
+            Animated.timing(statusFadeAnim, {
+                toValue: 1, // 最終的な透明度は1（不透明）
+                duration: 250, // アニメーションの時間は500ミリ秒
+                useNativeDriver: true, // ネイティブドライバーを使用
+            }).start();
+        } else {
+            // livingが選択されていない場合は透明度を0に戻す
+            statusFadeAnim.setValue(0);
+        }
+    }, [selectedAttributes['living'], statusFadeAnim]);
+
+    // オプションテキストとボーダーのフェードインアニメーションスタイル
+    const optionFadeStyle = { opacity: statusFadeAnim };
     return (
-        <View style={styles.content}>
-            <View>
-                <Text style={styles.ttl}>Input1</Text>
-            </View>
-            <View style={styles.WelcomeBtnContainer}>
-            </View>
-        </View>
+        <>
+            <ScrollView contentContainerStyle={styles.content}>
+                {Object.entries(attributes).map(([category, options], index) => {
+                    // statusカテゴリの場合はstatusFadeAnimを使用
+                    const fadeAnimationStyle = category === 'status' ? { opacity: statusFadeAnim } : {};
+
+                    // カテゴリの属性ボタンをレンダリング
+                    const categoryElements = (
+                        <Animated.View
+                            key={category}
+                            style={[
+                                styles.wrap,
+                                fadeAnimationStyle,
+                                { display: options.length > 0 ? 'flex' : 'none' }
+                            ]}
+                        >
+                            {options.map((attribute) => (
+                                <AttributeBtn
+                                    key={attribute}
+                                    title={attribute}
+                                    onPress={() => handleAttributePress(category, attribute)}
+                                    selected={selectedAttributes[category] === attribute}
+                                />
+                            ))}
+                        </Animated.View>
+                    );
+
+                    // livingカテゴリの後にオプションテキストとボーダーを挿入
+                    if (category === 'living') {
+                        return (
+                            <React.Fragment key="livingFragment">
+                                {categoryElements}
+                                {selectedAttributes['living'] && (
+                                    <Animated.View style={[optionFadeStyle, styles.option]}>
+                                        <Text style={styles.optionText}>オプション</Text>
+                                        <View style={styles.separator} />
+                                    </Animated.View>
+                                )}
+                            </React.Fragment>
+                        );
+                    } else {
+                        return categoryElements;
+                    }
+                })}
+            </ScrollView>
+        </>
     );
 }
 
 const styles = StyleSheet.create({
     content: {
-        justifyContent: "space-between",
-        flex: 1,
+        flexDirection: "column",
+        flexWrap: "wrap",
+        gap: 16,
         backgroundColor: "#fff",
-        paddingTop: 8,
-        paddingLeft: 16,
-        paddingRight: 16,
+        padding: 16,
+        flexGrow: 1,
     },
-    ttl: {
-        fontSize: 66,
-        fontWeight: "600",
+    wrap: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 16,
+        // flex: 1,
+        backgroundColor: "#fff",
+        flexGrow: 1,
     },
-    subTtl: {
-        fontWeight: "500",
-        fontSize: 26,
-        lineHeight: 35,
+    attributeBtn: {
+        backgroundColor: "#fff",
+        borderColor: "#333",
+        borderWidth: 3,
+        width: buttonSize, // 正方形の幅
+        height: buttonSize, // 正方形の高さ
+        borderRadius: 16,
+        justifyContent: 'center', // 子要素を中央に配置
+        alignItems: 'center', // 子要素を中央に配置
     },
-    WelcomeBtnContainer: {
+    option: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        // 他のスタイル属性
+    },
+    optionText: {
+        paddingHorizontal: 8,
+        textAlign: 'center', // テキストを中央揃えに
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#888',
+        // padding: 8, // オプションテキストの上下のパディング
+    },
+    separator: {
         flex: 1,
-        gap: 8,
-        padding: 8,
-        justifyContent: "flex-end",
-        // backgroundColor: "blue",
-    },
-    tosText: {
-        paddingTop: 4,
-        height: 60,
-        fontSize: 12,
-        textAlign: "center",
-        lineHeight: 18,
-    },
-    link: {
-        textDecorationLine: "underline",
-        color: "#555",
+        height: 1,
+        marginTop: 4, // オプションテキストとの間隔
+        marginBottom: 4, // 次の要素との間隔
+        backgroundColor: '#888',
     },
 });
-

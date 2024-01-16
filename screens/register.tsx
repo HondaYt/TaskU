@@ -16,7 +16,6 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import Welcome from 'screens/welcome'
 import Input1 from 'screens/registerInner/input1'
 import Input2 from 'screens/registerInner/input2'
 import Input3 from 'screens/registerInner/input3'
@@ -29,14 +28,26 @@ const Stack = createNativeStackNavigator();
 
 export default function Register({ navigation }: any) {
     // コンテンツのリストを定義
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const contents = [
-        <Input1 />,
-        <Input2 />,
+        <Input1 setIsButtonDisabled={setIsButtonDisabled} />,
+        <Input2 setIsButtonDisabled={setIsButtonDisabled} />,
         <Input3 />,
         <Complete />,
     ];
     // 現在のコンテンツのインデックスを追跡するための状態
     const [currentIndex, setCurrentIndex] = useState(0);
+    const progressTexts = [
+        `まずはあなたのことを${"\n"}教えてください！`,
+        `あなたに最適な${"\n"}テンプレートはこちらです。`,
+        "ほぼ完了です！",
+        "登録完了！"
+    ];
+    const [progressText, setProgressText] = useState(progressTexts[0]);
+
+    useEffect(() => {
+        setProgressText(progressTexts[currentIndex]);
+    }, [currentIndex]);
 
     // 次のコンテンツに切り替える関数
     const handleNext = () => {
@@ -79,6 +90,7 @@ export default function Register({ navigation }: any) {
                     <RegisterIndicator
                         progress={(currentIndex + 1)}
                         maxProgress={contents.length}
+                        progressText={progressText}
                     />
                 </Animated.View>
             </View>
@@ -99,6 +111,7 @@ export default function Register({ navigation }: any) {
                         title='次へ進む'
                         style={{ flex: 1 }}
                         onPress={handleNext}
+                        disabled={isButtonDisabled}
                     /> :
                     <Btn
                         title='トップページへ'

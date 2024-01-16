@@ -3,48 +3,43 @@ exports.__esModule = true;
 var react_1 = require("react");
 var native_stack_1 = require("@react-navigation/native-stack");
 var react_native_1 = require("react-native");
+var tempChild_1 = require("components/tempChild");
 var Stack = native_stack_1.createNativeStackNavigator();
-function registerInput2(_a) {
-    var navigation = _a.navigation;
-    return (react_1["default"].createElement(react_native_1.View, { style: styles.content },
-        react_1["default"].createElement(react_native_1.View, null,
-            react_1["default"].createElement(react_native_1.Text, { style: styles.ttl }, "Input2")),
-        react_1["default"].createElement(react_native_1.View, { style: styles.WelcomeBtnContainer })));
+var width = react_native_1.Dimensions.get('window').width;
+// ボタンの幅（または高さ）を計算
+var buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
+function registerInput1(_a) {
+    var setIsButtonDisabled = _a.setIsButtonDisabled;
+    return (react_1["default"].createElement(react_1["default"].Fragment, null,
+        react_1["default"].createElement(react_native_1.ScrollView, { contentContainerStyle: styles.content },
+            react_1["default"].createElement(tempChild_1["default"], null))));
 }
-exports["default"] = registerInput2;
+exports["default"] = registerInput1;
 var styles = react_native_1.StyleSheet.create({
     content: {
-        justifyContent: "space-between",
-        flex: 1,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 16,
         backgroundColor: "#fff",
-        paddingTop: 8,
-        paddingLeft: 16,
-        paddingRight: 16
+        padding: 16,
+        flexGrow: 1
     },
-    ttl: {
-        fontSize: 66,
-        fontWeight: "600"
+    wrap: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: 16,
+        // flex: 1,
+        backgroundColor: "#fff",
+        flexGrow: 1
     },
-    subTtl: {
-        fontWeight: "500",
-        fontSize: 26,
-        lineHeight: 35
-    },
-    WelcomeBtnContainer: {
-        flex: 1,
-        gap: 8,
-        padding: 8,
-        justifyContent: "flex-end"
-    },
-    tosText: {
-        paddingTop: 4,
-        height: 60,
-        fontSize: 12,
-        textAlign: "center",
-        lineHeight: 18
-    },
-    link: {
-        textDecorationLine: "underline",
-        color: "#555"
+    attributeBtn: {
+        backgroundColor: "#fff",
+        borderColor: "#333",
+        borderWidth: 3,
+        width: buttonSize,
+        height: buttonSize,
+        borderRadius: 16,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
