@@ -17,7 +17,7 @@ import {
     Dimensions,
 } from 'react-native';
 
-import Welcome from 'screens/welcome'
+import Welcome from 'screens/Welcome'
 import Btn from 'components/btn'
 import AttributeBtn from 'components/attributeBtn'
 const Stack = createNativeStackNavigator();
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         gap: 16,
         backgroundColor: "#fff",
         padding: 16,
-        flexGrow: 1,
+        // flexGrow: 1,
     },
     wrap: {
         flexDirection: "row",

@@ -16,15 +16,14 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import Input1 from 'screens/registerInner/input1'
-import Input2 from 'screens/registerInner/input2'
-import Input3 from 'screens/registerInner/input3'
-import Complete from 'screens/registerInner/complete'
+import Input1 from 'screens/registerInner/Input1'
+import Input2 from 'screens/registerInner/Input2'
+import Input3 from 'screens/registerInner/Input3'
+import Complete from 'screens/registerInner/Complete'
 import Btn from 'components/btn'
 import RegisterIndicator from 'components/registerIndicator'
 
 const Stack = createNativeStackNavigator();
-
 
 export default function Register({ navigation }: any) {
     // コンテンツのリストを定義
@@ -40,8 +39,8 @@ export default function Register({ navigation }: any) {
     const progressTexts = [
         `まずはあなたのことを${"\n"}教えてください！`,
         `あなたに最適な${"\n"}テンプレートはこちらです。`,
-        "ほぼ完了です！",
-        "登録完了！"
+        `最後に、授業が終わる時間を${"\n"}教えてください！`,
+        "登録が完了しました。"
     ];
     const [progressText, setProgressText] = useState(progressTexts[0]);
 
@@ -114,9 +113,9 @@ export default function Register({ navigation }: any) {
                         disabled={isButtonDisabled}
                     /> :
                     <Btn
-                        title='トップページへ'
+                        title='TaskUを始める'
                         style={{ flex: 1 }}
-                        onPress={() => navigation.navigate('Top')}
+                        onPress={() => navigation.navigate('Main')}
                     />
                 }
             </View>

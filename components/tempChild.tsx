@@ -17,22 +17,29 @@ import {
     Dimensions,
 } from 'react-native';
 
-import Welcome from 'screens/welcome'
+import Welcome from 'screens/Welcome'
 import Btn from 'components/btn'
 import AttributeBtn from 'components/attributeBtn'
 
-export default function TempChild() {
+type tempChildProps = {
+    count: number,
+    todo: string,
+    onEditPress: () => void,
+}
+export default function TempChild({ count, todo, onEditPress }: tempChildProps) {
 
     return (
         <>
             <View style={styles.tempInfo}>
                 <Text style={styles.tempInfoText}>
-                    週に<Text style={styles.tempInfoCount}>2</Text>回、洗濯をする。
+                    週に<Text style={styles.tempInfoCount}>{count}</Text>回、{todo}をする。
                 </Text>
                 <Btn
                     title='編集'
-                    onPress={() => console.log('pressed')}
-                    style={{ width: 60, height: 50 }}
+                    onPress={onEditPress}
+                    style={{
+                        width: 60, height: 50,
+                    }}
                 />
             </View>
         </>
@@ -41,22 +48,20 @@ export default function TempChild() {
 
 const styles = StyleSheet.create({
     tempInfo: {
-        flex: 1,
         flexDirection: "row",
         justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        backgroundColor: "#fff",
-        // padding: 16,
-        // borderRadius: 16,
+        alignItems: 'center',
+        // backgroundColor: "tomato",
+        flex: 1,
+        width: '100%',
     },
     tempInfoText: {
         fontSize: 18,
         fontWeight: "500",
-
+        flexShrink: 1,
     },
     tempInfoCount: {
         fontSize: 36,
-
         fontWeight: "600",
     },
 });

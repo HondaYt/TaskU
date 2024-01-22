@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { PropsWithChildren } from 'react';
+import { PieChart, ProgressCircle } from 'react-native-svg-charts';
 import {
     SafeAreaView,
     ScrollView,
@@ -15,58 +16,30 @@ import {
     TouchableOpacity
 } from 'react-native';
 
+
 import Welcome from 'screens/Welcome'
-import Btn from 'components/btn'
+import Register from 'screens/Register'
+
 const Stack = createNativeStackNavigator();
 
-export default function registerInput3({ navigation }: any) {
+export default function Top() {
+
     return (
         <View style={styles.content}>
-            <View>
-                <Text>aaa</Text>
-            </View>
-            <View style={styles.WelcomeBtnContainer}>
+            <View >
+                <Text>あああ</Text>
 
             </View>
         </View>
     );
 }
-
 const styles = StyleSheet.create({
     content: {
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
         flex: 1,
         backgroundColor: "#fff",
         paddingTop: 8,
         paddingLeft: 16,
         paddingRight: 16,
     },
-    ttl: {
-        fontSize: 66,
-        fontWeight: "600",
-    },
-    subTtl: {
-        fontWeight: "500",
-        fontSize: 26,
-        lineHeight: 35,
-    },
-    WelcomeBtnContainer: {
-        flex: 1,
-        gap: 8,
-        padding: 8,
-        justifyContent: "flex-end",
-        // backgroundColor: "blue",
-    },
-    tosText: {
-        paddingTop: 4,
-        height: 60,
-        fontSize: 12,
-        textAlign: "center",
-        lineHeight: 18,
-    },
-    link: {
-        textDecorationLine: "underline",
-        color: "#555",
-    },
 });
-

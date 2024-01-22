@@ -15,30 +15,13 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import Welcome from 'screens/welcome'
-import Top from 'screens/top'
-import Register from 'screens/register'
+import Welcome from 'screens/Welcome'
+import Main from 'screens/Main'
+import Register from 'screens/Register'
 
 const Stack = createNativeStackNavigator();
 
-const styles = StyleSheet.create({
-    main: {
-        flex: 1,
-        backgroundColor: "#fff",
-    },
-    contents: {
-        flex: 1,
-    },
-    container: {
-        flex: 1,
-        position: 'relative',
 
-    },
-    screen: {
-        flex: 1,
-        backgroundColor: "#fff",
-    },
-});
 
 export default function App() {
     return (
@@ -53,7 +36,7 @@ export default function App() {
                             }}>
                             <Stack.Screen name="Welcome" component={Welcome} />
                             <Stack.Screen name="Register" component={Register} />
-                            <Stack.Screen name="Top" component={Top} />
+                            <Stack.Screen name="Main" component={Main} />
                         </Stack.Navigator>
                     </NavigationContainer>
                 </SafeAreaView>
@@ -61,3 +44,14 @@ export default function App() {
         </SafeAreaProvider>
     );
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative',
+
+    },
+    screen: {
+        flex: 1,
+        backgroundColor: "#fff",
+    },
+});
