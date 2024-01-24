@@ -18,8 +18,8 @@ import {
 } from 'react-native';
 
 import Welcome from 'screens/Welcome'
-import Btn from 'components/btn'
-import AttributeBtn from 'components/attributeBtn'
+import Btn from 'components/Btn'
+import AttributeBtn from 'components/AttributeBtn'
 const Stack = createNativeStackNavigator();
 
 const { width } = Dimensions.get('window');

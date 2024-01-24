@@ -27,18 +27,9 @@ export default function Top() {
     return (
         <View style={styles.content}>
             <View >
-                <Text>おはようございます</Text>
-                <Text>ゲストさん</Text>
-                <Text>今日は2024/01/22</Text>
+                <Text>あああ</Text>
+
             </View>
-            <ProgressCircle
-                style={{ height: 200 }}
-                progress={0.9}
-                progressColor={'rgb(134, 65, 244)'}
-                strokeWidth={20}
-            // cornerRadius={0}
-            // endAngle={1}
-            />
         </View>
     );
 }

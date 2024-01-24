@@ -1,45 +1,38 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import type { PropsWithChildren } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
     StyleSheet,
     Text,
-    useColorScheme,
     View,
-    TouchableOpacity
 } from 'react-native';
 
-import Btn from 'components/btn'
-const Stack = createNativeStackNavigator();
+import Btn from 'components/Btn'
 
 export default function App({ navigation }: any) {
     return (
-        <View style={styles.content}>
-            <View>
-                <Text style={styles.subTtl}>
-                    大切なあなたの時間を守る、{"\n"}
-                    タスク管理アプリ。
-                </Text>
-                <Text style={styles.ttl}>TaskU</Text>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+            <View style={styles.content}>
+                <View>
+                    <Text style={styles.subTtl}>
+                        大切なあなたの時間を守る、{"\n"}
+                        タスク管理アプリ。
+                    </Text>
+                    <Text style={styles.ttl}>TaskU</Text>
+                </View>
+                <View style={styles.WelcomeBtnContainer}>
+                    <Btn
+                        title='今すぐ始めよう'
+                        onPress={() => navigation.navigate('Register')}
+                    />
+                    <Text style={styles.tosText}>本サービスの利用開始をもって、{"\n"}
+                        <Text style={styles.link}>利用規約</Text>
+                        と<Text style={styles.link}>プライバシーポリシー</Text>
+                        に同意したこととなります。
+                    </Text>
+                </View>
             </View>
-            <View style={styles.WelcomeBtnContainer}>
-                <Btn
-                    title='今すぐ始めよう'
-                    onPress={() => navigation.navigate('Register')}
-                />
-                <Text style={styles.tosText}>本サービスの利用開始をもって、{"\n"}
-                    <Text style={styles.link}>利用規約</Text>
-                    と<Text style={styles.link}>プライバシーポリシー</Text>
-                    に同意したこととなります。
-                </Text>
-            </View>
-        </View>
+        </SafeAreaView>
     );
 }
 

@@ -3123,6 +3123,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/blur@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "@react-native-community/blur@npm:4.4.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 898a886f0ae176636be87286066d03411ad6d9ac28361f1aae5c40c37d3b42d3f0ecbae4f36ed6cddb645f02e1df3027636a372e479a75880c793482530e53c2
+  languageName: node
+  linkType: hard
+
 "@react-native-community/cli-clean@npm:11.3.7":
   version: 11.3.7
   resolution: "@react-native-community/cli-clean@npm:11.3.7"
@@ -4434,7 +4444,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prop-types@npm:*":
+"@types/prop-types@npm:*, @types/prop-types@npm:^15":
   version: 15.7.11
   resolution: "@types/prop-types@npm:15.7.11"
   checksum: e53423cf9d510515ef8b47ff42f4f1b65a7b7b37c8704e2dbfcb9a60defe0c0e1f3cb1acfdeb466bad44ca938d7c79bffdd51b48ffb659df2432169d0b27a132
@@ -17827,13 +17837,16 @@ __metadata:
     "@babel/plugin-transform-optional-chaining": "npm:^7.23.4"
     "@babel/plugin-transform-shorthand-properties": "npm:^7.23.3"
     "@babel/plugin-transform-template-literals": "npm:^7.23.3"
+    "@expo/vector-icons": "npm:^13.0.0"
     "@gorhom/bottom-sheet": "npm:^4"
     "@npmcli/fs": "npm:^3.1.0"
     "@npmcli/move-file": "npm:^3.0.0"
+    "@react-native-community/blur": "npm:^4.4.0"
     "@react-navigation/native": "npm:^6.1.9"
     "@react-navigation/native-stack": "npm:^6.9.17"
     "@types/customize-cra": "npm:^1"
     "@types/eslint": "npm:^8"
+    "@types/prop-types": "npm:^15"
     "@types/react": "npm:~18.2.14"
     "@types/react-dom": "npm:~18.0.10 "
     "@types/react-native-svg-charts": "npm:^5"
@@ -17853,6 +17866,7 @@ __metadata:
     expo-router: "npm:^2.0.14"
     expo-status-bar: "npm:~1.6.0"
     metro: "npm:~0.76.7"
+    prop-types: "npm:^15.8.1"
     react: "npm:18.2.0"
     react-app-rewired: "npm:^2.2.1"
     react-dom: "npm:~18.2.0"

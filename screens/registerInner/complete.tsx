@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 import Welcome from 'screens/welcome'
-import Btn from 'components/btn'
+import Btn from 'components/Btn'
 const Stack = createNativeStackNavigator();
 
 export default function Complete({ navigation }: any) {

@@ -1,29 +1,19 @@
 import React from 'react';
-import { useEffect, useState, useRef, useCallback } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { useState, useRef, useCallback } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import type { PropsWithChildren } from 'react';
 import {
-    SafeAreaView,
     ScrollView,
-    StatusBar,
-    Animated,
     StyleSheet,
     Text,
-    useColorScheme,
     View,
-    TouchableOpacity,
     Dimensions,
 } from 'react-native';
 
-import Welcome from 'screens/Welcome'
-import Btn from 'components/btn'
-import AttributeBtn from 'components/attributeBtn'
-import TempChild from 'components/tempChild'
+import Btn from 'components/Btn'
+import TempChild from 'components/TempChild'
 const Stack = createNativeStackNavigator();
 
 const { width } = Dimensions.get('window');
@@ -67,6 +57,8 @@ export default function registerInput2({ setIsButtonDisabled }: RegisterInput2Pr
                         index={0}
                         snapPoints={['25%']}
                         backgroundStyle={{
+                            borderBottomEndRadius: 0,
+                            borderBottomStartRadius: 0,
                             backgroundColor: '#fff',
                             shadowColor: '#000',
                             shadowOffset: {

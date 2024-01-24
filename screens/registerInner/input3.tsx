@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import type { PropsWithChildren } from 'react';
 import {
     SafeAreaView,
     ScrollView,
@@ -16,7 +15,7 @@ import {
 } from 'react-native';
 
 import Welcome from 'screens/Welcome'
-import Btn from 'components/btn'
+import Btn from 'components/Btn'
 const Stack = createNativeStackNavigator();
 
 export default function registerInput3({ navigation }: any) {

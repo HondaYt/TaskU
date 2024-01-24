@@ -16,7 +16,6 @@ import {
     Animated,
 } from 'react-native';
 
-import Welcome from 'screens/welcome'
 const Stack = createNativeStackNavigator();
 
 

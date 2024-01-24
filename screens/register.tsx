@@ -1,30 +1,18 @@
 import React from 'react';
 import { useEffect, useState, useRef } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import type { PropsWithChildren } from 'react';
-import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    Animated,
-    StyleSheet,
-    Text,
-    useColorScheme,
-    View,
-    TouchableOpacity
-} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Animated, StyleSheet, View, } from 'react-native';
+
+import Btn from 'components/Btn'
+import RegisterIndicator from 'components/RegisterIndicator'
 
 import Input1 from 'screens/registerInner/Input1'
 import Input2 from 'screens/registerInner/Input2'
 import Input3 from 'screens/registerInner/Input3'
 import Complete from 'screens/registerInner/Complete'
-import Btn from 'components/btn'
-import RegisterIndicator from 'components/registerIndicator'
 
-const Stack = createNativeStackNavigator();
-
+import { Octicons } from '@expo/vector-icons';
 export default function Register({ navigation }: any) {
     // コンテンツのリストを定義
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -83,8 +71,8 @@ export default function Register({ navigation }: any) {
         }
     }, [currentIndex, contents.length, fadeAnim]);
     return (
-        <>
-            <View style={{ backgroundColor: '#fff' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['right', 'top', 'left']}>
+            <View>
                 <Animated.View style={{ opacity: fadeAnim }}>
                     <RegisterIndicator
                         progress={(currentIndex + 1)}
@@ -101,7 +89,7 @@ export default function Register({ navigation }: any) {
                 {currentIndex === 0 || currentIndex === contents.length - 1 ? null :
                     <Btn
                         prev
-                        title='戻る'
+                        title={<Octicons name="chevron-left" size={32} color="#555" />}
                         onPress={handlePrev}
                     />
                 }
@@ -119,7 +107,7 @@ export default function Register({ navigation }: any) {
                     />
                 }
             </View>
-        </>
+        </SafeAreaView>
     );
 }
 
@@ -135,8 +123,8 @@ const styles = StyleSheet.create({
         padding: 8,
         paddingLeft: 32,
         paddingRight: 32,
-
         justifyContent: "space-between",
+        paddingBottom: 34 + 8,
     },
 
 });
