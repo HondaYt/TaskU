@@ -1,9 +1,8 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { PropsWithChildren } from 'react';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
+
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
     ScrollView,
@@ -15,7 +14,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
-import { FAB } from 'react-native-paper';
+
 
 import Welcome from 'screens/Welcome'
 import Register from 'screens/Register'
@@ -24,66 +23,74 @@ import Btn from 'components/Btn'
 import CurrentTask from 'components/CurrentTask'
 import NextTask from 'components/NextTask'
 
+import FreeTimeImg from 'img/FreeTime.svg'
 const Stack = createNativeStackNavigator();
 
-export default function Top() {
+export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
+
+    const currentDate = new Date();
+    const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
 
     return (
+
         <View style={{ backgroundColor: '#fff' }}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.homeHeader}>
                     <View style={styles.headerTextWrap}>
                         <Text style={styles.headerText}>おはようございます</Text>
-                        <Text style={styles.headerText}>今日は<Text style={styles.date}>2023.9.27 Wed</Text></Text>
+                        <Text style={styles.headerText}>今日は<Text style={styles.date}>{currentDate.getFullYear()}.{currentDate.getMonth() + 1}.{currentDate.getDate()} {daysOfWeek[currentDate.getDay()]}曜日</Text></Text>
                     </View>
                     <View style={styles.userIcon}>
                         <Octicons name="person" size={30} color="#fff" />
                     </View>
                 </View>
                 <Text style={styles.sectionTtl}>今日の残り時間</Text>
-                <Timer />
-                <Text style={styles.sectionTtl}>現在のタスク</Text>
-                <CurrentTask taskGenre='HTML' taskTtl='Work06' taskDeadline='2023.9.27' taskImportance='高' />
-                <Text style={styles.sectionTtl}>次のタスク</Text>
-                <View style={{ gap: 16 }}>
-                    <NextTask
-                        taskGenre='PhotoShop'
-                        taskTtl='キャラクター紹介'
-                        taskDeadline='2023.10.06'
-                        taskImportance='中'
-                    />
-                    <NextTask
-                        taskGenre='Illustrator'
-                        taskTtl='カレンダー'
-                        taskDeadline='2023.10.02'
-                        taskImportance='低'
-                    />
-                    <NextTask
-                        taskGenre='家事'
-                        taskTtl='洗濯する'
-                        taskDeadline='2023.10.27'
-                        taskImportance='中'
-                    />
-                    <NextTask
-                        taskGenre='家事'
-                        taskTtl='洗濯する'
-                        taskDeadline='2023.10.27'
-                        taskImportance='中'
-                    />
+                <Timer setIsTimerZero={setIsTimerZero} />
+                <View style={{ height: 450, justifyContent: 'center', alignItems: 'center', gap: 8 }}>
+                    <FreeTimeImg height={200} width={200} />
+                    <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold', lineHeight: 28, }}>今日予定されていた{"\n"}タスクは完了しました！</Text >
+                </View>
+                <View>
+                    <Text style={styles.sectionTtl}>現在のタスク</Text>
+                    <CurrentTask taskGenre='HTML' taskTtl='Work06' taskDeadline='2024.9.27' taskImportance='高' />
+                    <Text style={styles.sectionTtl}>今日のタスク</Text>
+                    <View style={{ gap: 16 }}>
+                        <NextTask
+                            taskGenre='PhotoShop'
+                            taskTtl='キャラクター紹介'
+                            taskDeadline='2024.10.06'
+                            taskImportance='中'
+                        />
+                        <NextTask
+                            taskGenre='Illustrator'
+                            taskTtl='カレンダー'
+                            taskDeadline='2024.10.02'
+                            taskImportance='低'
+                        />
+                        <NextTask
+                            taskGenre='Illustrator'
+                            taskTtl='カレンダー'
+                            taskDeadline='2024.10.02'
+                            taskImportance='低'
+                        />
+                        <NextTask
+                            taskGenre='家事'
+                            taskTtl='洗濯する'
+                            taskDeadline='2024.10.27'
+                            taskImportance='中'
+                        />
+                    </View>
                 </View>
             </ScrollView>
-            <FAB
-                style={styles.fab}
-                icon="plus"
-                color="#fff"
-                onPress={() => console.log('Pressed')}
-            />
-        </View>
+        </View >
+
     );
 }
 const styles = StyleSheet.create({
+
     userIcon: {
         width: 48,
+
         height: 48,
         borderRadius: 50,
         backgroundColor: '#61c2d5',
@@ -180,11 +187,5 @@ const styles = StyleSheet.create({
         marginTop: 8,
         gap: 8,
     },
-    fab: {
-        backgroundColor: '#764bda',
-        position: 'absolute',
-        margin: 16,
-        right: 0,
-        bottom: 0,
-    },
+
 });

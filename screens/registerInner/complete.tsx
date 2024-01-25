@@ -15,7 +15,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import Welcome from 'screens/welcome'
+import Welcome from 'screens/Welcome'
 import Btn from 'components/Btn'
 const Stack = createNativeStackNavigator();
 

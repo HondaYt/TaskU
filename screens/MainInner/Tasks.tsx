@@ -1,45 +1,60 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import type { PropsWithChildren } from 'react';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
-import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    useColorScheme,
-    View,
-    TouchableOpacity
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
 
+const Tasks = () => {
+    const [tasks, setTasks] = useState<string[]>([]);
+    const [input, setInput] = useState('');
 
-import Welcome from 'screens/Welcome'
-import Register from 'screens/Register'
+    const handleAddTask = () => {
+        setTasks([...tasks, input]);
+        setInput('');
+    };
 
-const Stack = createNativeStackNavigator();
-
-export default function Top() {
+    const handleDeleteTask = (index: number) => {
+        setTasks(tasks.filter((task, i) => i !== index));
+    };
 
     return (
-        <View style={styles.content}>
-            <View >
-                <Text>あああ</Text>
-
-            </View>
+        <View style={styles.container}>
+            <TextInput
+                style={styles.input}
+                value={input}
+                onChangeText={setInput}
+                placeholder="新しいタスクを入力"
+            />
+            <Button title="タスクを追加" onPress={handleAddTask} />
+            <FlatList
+                data={tasks}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item, index }) => (
+                    <View style={styles.task}>
+                        <Text>{item}</Text>
+                        <Button title="削除" onPress={() => handleDeleteTask(index)} />
+                    </View>
+                )}
+            />
         </View>
     );
-}
+};
+
 const styles = StyleSheet.create({
-    content: {
-        // justifyContent: "space-between",
+    container: {
         flex: 1,
+        padding: 24,
         backgroundColor: "#fff",
-        paddingTop: 8,
-        paddingLeft: 16,
-        paddingRight: 16,
+    },
+    input: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 10,
+    },
+    task: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
     },
 });
+
+export default Tasks;

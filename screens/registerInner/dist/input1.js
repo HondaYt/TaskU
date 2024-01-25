@@ -13,10 +13,8 @@ var __assign = (this && this.__assign) || function () {
 exports.__esModule = true;
 var react_1 = require("react");
 var react_2 = require("react");
-var native_stack_1 = require("@react-navigation/native-stack");
 var react_native_1 = require("react-native");
 var AttributeBtn_1 = require("components/AttributeBtn");
-var Stack = native_stack_1.createNativeStackNavigator();
 var width = react_native_1.Dimensions.get('window').width;
 // ボタンの幅（または高さ）を計算
 var buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値

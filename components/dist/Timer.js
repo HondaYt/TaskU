@@ -4,16 +4,20 @@ var react_1 = require("react");
 var react_2 = require("react");
 var react_native_1 = require("react-native");
 var InsetShadow_1 = require("components/InsetShadow");
-function Timer() {
-    var initialTime = 0.005 * 60 * 60; // 初期値は5時間（秒単位）
-    var _a = react_2.useState(initialTime), time = _a[0], setTime = _a[1];
-    var _b = react_2.useState(100), width = _b[0], setWidth = _b[1]; // 初期値は100
+function Timer(_a) {
+    var setIsTimerZero = _a.setIsTimerZero;
+    var initialTime = 0.005 * 60 * 60; // 初期値は0.1時間（秒単位）
+    var _b = react_2.useState(initialTime), time = _b[0], setTime = _b[1];
+    var _c = react_2.useState(100), width = _c[0], setWidth = _c[1]; // 初期値は100
     react_2.useEffect(function () {
         var timerId = setInterval(function () {
             setTime(function (prevTime) {
                 if (prevTime <= 1) {
                     clearInterval(timerId); // 残り時間が0になったらタイマーを停止
-                    setWidth(0); // 残り時間が0になったらwidthも0に設定
+                    setTimeout(function () {
+                        setIsTimerZero(true); // 残り時間が0になったら、setIsTimerZeroを呼び出す
+                        setWidth(0);
+                    }, 0);
                     return 0;
                 }
                 var newTime = prevTime - 1;
@@ -51,7 +55,9 @@ var styles = react_native_1.StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'flex-end',
-        backgroundColor: '#67DD73'
+        backgroundColor: '#67DD73',
+        borderEndEndRadius: 16,
+        borderTopEndRadius: 16
     },
     remainingText: {
         color: '#fff',

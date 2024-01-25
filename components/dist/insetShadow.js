@@ -28,6 +28,7 @@ var styles = react_native_1.StyleSheet.create({
         flex: 1
     },
     insetShadow: {
+        // margin: 8,
         position: 'relative',
         height: '100%',
         width: '100%',

@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { PropsWithChildren } from 'react';
 import { Svg } from 'react-native-svg';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
+
 import {
     SafeAreaView,
     Text,
@@ -21,19 +21,21 @@ import {
 import Welcome from 'screens/Welcome'
 import Register from 'screens/Register'
 import InsetShadow from 'components/InsetShadow'
+export default function Timer({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
 
-export default function Timer() {
-
-    const initialTime = 0.005 * 60 * 60; // 初期値は5時間（秒単位）
-    const [time, setTime] = useState(initialTime);
-    const [width, setWidth] = useState(100); // 初期値は100
+    const initialTime = 0.005 * 60 * 60; // 初期値は0.1時間（秒単位）
+    const [time, setTime] = useState<number>(initialTime);
+    const [width, setWidth] = useState<number>(100); // 初期値は100
 
     useEffect(() => {
         const timerId = setInterval(() => {
             setTime(prevTime => {
                 if (prevTime <= 1) {
                     clearInterval(timerId); // 残り時間が0になったらタイマーを停止
-                    setWidth(0); // 残り時間が0になったらwidthも0に設定
+                    setTimeout(() => {
+                        setIsTimerZero(true); // 残り時間が0になったら、setIsTimerZeroを呼び出す
+                        setWidth(0);
+                    }, 0);
                     return 0;
                 }
                 const newTime = prevTime - 1;
@@ -84,6 +86,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'flex-end',
         backgroundColor: '#67DD73',
+        borderEndEndRadius: 16,
+        borderTopEndRadius: 16,
+
     },
     remainingText: {
         color: '#fff',

@@ -5,22 +5,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { PropsWithChildren } from 'react';
 import {
-    SafeAreaView,
     ScrollView,
-    StatusBar,
     Animated,
     StyleSheet,
     Text,
-    useColorScheme,
     View,
-    TouchableOpacity,
     Dimensions,
 } from 'react-native';
 
-import Welcome from 'screens/Welcome'
-import Btn from 'components/Btn'
 import AttributeBtn from 'components/AttributeBtn'
-const Stack = createNativeStackNavigator();
 
 const { width } = Dimensions.get('window');
 // ボタンの幅（または高さ）を計算

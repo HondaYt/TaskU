@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'tomato',
     },
     insetShadow: {
+        // margin: 8,
         position: 'relative',
         height: '100%',
         width: '100%',
