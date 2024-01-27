@@ -11,11 +11,19 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hondayt.TaskU",
+      "infoPlist": {
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.679833251993-p0scalicgumkfp665pgcmhol5cvsri0d"
+            ]
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {

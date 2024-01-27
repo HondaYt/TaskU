@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import Btn from 'components/Btn'
+import GoogleAuth from 'components/Auth.native';
 
 export default function App({ navigation }: any) {
     return (
@@ -21,10 +22,11 @@ export default function App({ navigation }: any) {
                     <Text style={styles.ttl}>TaskU</Text>
                 </View>
                 <View style={styles.WelcomeBtnContainer}>
-                    <Btn
+                    {/* <Btn
                         title='今すぐ始めよう'
                         onPress={() => navigation.navigate('Register')}
-                    />
+                    /> */}
+                    <GoogleAuth />
                     <Text style={styles.tosText}>本サービスの利用開始をもって、{"\n"}
                         <Text style={styles.link}>利用規約</Text>
                         と<Text style={styles.link}>プライバシーポリシー</Text>

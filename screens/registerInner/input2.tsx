@@ -1,104 +1,131 @@
 import React from 'react';
-import { useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import type { PropsWithChildren } from 'react';
 import {
     ScrollView,
+    Animated,
     StyleSheet,
     Text,
     View,
     Dimensions,
 } from 'react-native';
 
-import Btn from 'components/Btn'
-import TempChild from 'components/TempChild'
-const Stack = createNativeStackNavigator();
+import AttributeBtn from 'components/AttributeBtn'
 
 const { width } = Dimensions.get('window');
 // ボタンの幅（または高さ）を計算
 const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
 
-interface RegisterInput2Props {
+interface RegisterInput1Props {
     setIsButtonDisabled: (disabled: boolean) => void;
 }
 
-export default function registerInput2({ setIsButtonDisabled }: RegisterInput2Props) {
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const [tasks, setTasks] = useState([{ name: '洗濯', count: 3 }, { name: '掃除', count: 1 }]);
-    const [activeTaskIndex, setActiveTaskIndex] = useState<number | null>(null);
+export default function registerInput1({ setIsButtonDisabled }: RegisterInput1Props) {
+    const [selectedAttributes, setSelectedAttributes] = useState<{ [category: string]: string | undefined }>({});
 
-    const handlePresentModalPress = useCallback((index: number) => {
-        setActiveTaskIndex(index);
-        bottomSheetModalRef.current?.present();
-    }, []);
+    useEffect(() => {
+        // 'living' 属性が選択されている場合のみボタンを有効にする
+        setIsButtonDisabled(!selectedAttributes['living']);
+    }, [selectedAttributes, setIsButtonDisabled]);
 
-    const incrementCount = () => {
-        setTasks(prevTasks => prevTasks.map((task, i) => i === activeTaskIndex ? { ...task, count: task.count + 1 } : task));
+    // 属性とそのカテゴリのマッピング
+    const attributes = {
+        'living': ['一人暮らし', '同居中'],
+        'status': selectedAttributes['living'] ? ['学生', '社会人', '主婦'] : [],
+        // 他のカテゴリと属性を追加
     };
 
-    const decrementCount = () => {
-        setTasks(prevTasks => prevTasks.map((task, i) => i === activeTaskIndex ? { ...task, count: task.count > 0 ? task.count - 1 : 0 } : task));
+    const handleAttributePress = (category: string, attribute: string) => {
+        setSelectedAttributes(prevSelectedAttributes => {
+            const newAttributes = { ...prevSelectedAttributes };
+            const isAlreadySelected = prevSelectedAttributes[category] === attribute;
+            newAttributes[category] = isAlreadySelected ? undefined : attribute;
+
+            // 'living' カテゴリの選択を解除した場合、'status' カテゴリもクリアする
+            if (category === 'living' && isAlreadySelected) {
+                newAttributes['status'] = undefined;
+            }
+
+            return newAttributes;
+        });
     };
 
+
+
+    const statusFadeAnim = useRef(new Animated.Value(0)).current; // 初期値は0（透明）
+
+    useEffect(() => {
+        // livingが選択されたらstatusカテゴリのフェードインアニメーションを開始
+        if (selectedAttributes['living']) {
+            Animated.timing(statusFadeAnim, {
+                toValue: 1, // 最終的な透明度は1（不透明）
+                duration: 250, // アニメーションの時間は500ミリ秒
+                useNativeDriver: true, // ネイティブドライバーを使用
+            }).start();
+        } else {
+            // livingが選択されていない場合は透明度を0に戻す
+            statusFadeAnim.setValue(0);
+        }
+    }, [selectedAttributes['living'], statusFadeAnim]);
+
+    // オプションテキストとボーダーのフェードインアニメーションスタイル
+    const optionFadeStyle = { opacity: statusFadeAnim };
     return (
         <>
-            <GestureHandlerRootView style={{ flex: 1 }}>
-                <BottomSheetModalProvider>
-                    <ScrollView contentContainerStyle={styles.content}>
-                        {tasks.map((task, index) => (
-                            <TempChild key={index} count={task.count} todo={task.name} onEditPress={() => handlePresentModalPress(index)} />
-                        ))}
-                    </ScrollView>
-                    <BottomSheetModal
-                        detached={true}
-                        ref={bottomSheetModalRef}
-                        index={0}
-                        snapPoints={['25%']}
-                        backgroundStyle={{
-                            borderBottomEndRadius: 0,
-                            borderBottomStartRadius: 0,
-                            backgroundColor: '#fff',
-                            shadowColor: '#000',
-                            shadowOffset: {
-                                width: 0,
-                                height: 0,
-                            },
-                            shadowOpacity: 0.25,
-                            shadowRadius: 6,
-                            elevation: 5,
-                        }}
-                    >
-                        <View style={styles.modalContainer}>
-                            {activeTaskIndex !== null && (
-                                <>
-                                    <Btn
-                                        title='-'
-                                        prev
-                                        style={{ width: 60, height: 60 }}
-                                        onPress={decrementCount}
-                                    />
-                                    <View style={styles.modalCounter}><Text style={styles.modalCounterText}>{tasks[activeTaskIndex].count}</Text></View>
-                                    <Btn
-                                        title='+'
-                                        style={{ width: 60, height: 60 }}
-                                        onPress={incrementCount}
-                                    />
-                                </>
-                            )}
-                        </View>
-                    </BottomSheetModal>
-                </BottomSheetModalProvider>
-            </GestureHandlerRootView>
+            <ScrollView contentContainerStyle={styles.content}>
+                {Object.entries(attributes).map(([category, options], index) => {
+                    // statusカテゴリの場合はstatusFadeAnimを使用
+                    const fadeAnimationStyle = category === 'status' ? { opacity: statusFadeAnim } : {};
+
+                    // カテゴリの属性ボタンをレンダリング
+                    const categoryElements = (
+                        <Animated.View
+                            key={category}
+                            style={[
+                                styles.wrap,
+                                fadeAnimationStyle,
+                                { display: options.length > 0 ? 'flex' : 'none' }
+                            ]}
+                        >
+                            {options.map((attribute) => (
+                                <AttributeBtn
+                                    key={attribute}
+                                    title={attribute}
+                                    onPress={() => handleAttributePress(category, attribute)}
+                                    selected={selectedAttributes[category] === attribute}
+                                />
+                            ))}
+                        </Animated.View>
+                    );
+
+                    // livingカテゴリの後にオプションテキストとボーダーを挿入
+                    if (category === 'living') {
+                        return (
+                            <React.Fragment key="livingFragment">
+                                {categoryElements}
+                                {selectedAttributes['living'] && (
+                                    <Animated.View style={[optionFadeStyle, styles.option]}>
+                                        <Text style={styles.optionText}>オプション</Text>
+                                        <View style={styles.separator} />
+                                    </Animated.View>
+                                )}
+                            </React.Fragment>
+                        );
+                    } else {
+                        return categoryElements;
+                    }
+                })}
+            </ScrollView>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-
     content: {
-        // flexDirection: "row",
+        flexDirection: "column",
         flexWrap: "wrap",
         gap: 16,
         backgroundColor: "#fff",
@@ -123,23 +150,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center', // 子要素を中央に配置
         alignItems: 'center', // 子要素を中央に配置
     },
-    modalContainer: {
+    option: {
         flexDirection: 'row',
-        // backgroundColor: '#ddd',
+        alignItems: 'center',
+        // 他のスタイル属性
+    },
+    optionText: {
+        paddingHorizontal: 8,
+        textAlign: 'center', // テキストを中央揃えに
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#888',
+        // padding: 8, // オプションテキストの上下のパディング
+    },
+    separator: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    modalCounter: {
-        width: 60,
-        height: 60,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    modalCounterText: {
-        fontSize: 36,
-        fontWeight: "600",
-        color: "#333",
-        textAlign: 'center',
+        height: 1,
+        marginTop: 4, // オプションテキストとの間隔
+        marginBottom: 4, // 次の要素との間隔
+        backgroundColor: '#888',
     },
 });

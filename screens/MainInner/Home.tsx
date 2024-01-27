@@ -24,7 +24,7 @@ import CurrentTask from 'components/CurrentTask'
 import NextTask from 'components/NextTask'
 
 import FreeTimeImg from 'img/FreeTime.svg'
-const Stack = createNativeStackNavigator();
+
 
 export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
 

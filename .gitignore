@@ -67,3 +67,6 @@ yarn-error.log
 
 # yarn
 .yarn/
+
+utils/
+firebaseConfig.js
