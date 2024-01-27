@@ -39,8 +39,9 @@ exports.__esModule = true;
 var react_1 = require("react");
 var google_signin_1 = require("@react-native-google-signin/google-signin");
 var supabase_1 = require("../utils/supabase");
-function default_1() {
+function default_1(_a) {
     var _this = this;
+    var navigation = _a.navigation;
     google_signin_1.GoogleSignin.configure({
         scopes: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile', 'openid'],
         iosClientId: '679833251993-p0scalicgumkfp665pgcmhol5cvsri0d.apps.googleusercontent.com'
@@ -61,10 +62,15 @@ function default_1() {
                         return [4 /*yield*/, supabase_1.supabase.auth.signInWithIdToken({
                                 provider: 'google',
                                 token: userInfo.idToken
-                            })];
+                            })
+                            // console.log(error, data)
+                        ];
                     case 3:
                         _a = _b.sent(), data = _a.data, error = _a.error;
-                        console.log(error, data);
+                        // console.log(error, data)
+                        if (!error) {
+                            navigation.navigate('Register', { userInfo: userInfo });
+                        }
                         return [3 /*break*/, 5];
                     case 4: throw new Error('no ID token present!');
                     case 5: return [3 /*break*/, 7];

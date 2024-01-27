@@ -15,7 +15,7 @@ function App(_a) {
                     "\u30BF\u30B9\u30AF\u7BA1\u7406\u30A2\u30D7\u30EA\u3002"),
                 react_1["default"].createElement(react_native_1.Text, { style: styles.ttl }, "TaskU")),
             react_1["default"].createElement(react_native_1.View, { style: styles.WelcomeBtnContainer },
-                react_1["default"].createElement(Auth_native_1["default"], null),
+                react_1["default"].createElement(Auth_native_1["default"], { navigation: navigation }),
                 react_1["default"].createElement(react_native_1.Text, { style: styles.tosText },
                     "\u672C\u30B5\u30FC\u30D3\u30B9\u306E\u5229\u7528\u958B\u59CB\u3092\u3082\u3063\u3066\u3001",
                     "\n",

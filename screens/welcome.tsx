@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import Btn from 'components/Btn'
-import GoogleAuth from 'components/Auth.native';
+import GoogleAuthBtn from 'components/Auth.native';
 
 export default function App({ navigation }: any) {
     return (
@@ -26,7 +26,7 @@ export default function App({ navigation }: any) {
                         title='今すぐ始めよう'
                         onPress={() => navigation.navigate('Register')}
                     /> */}
-                    <GoogleAuth />
+                    <GoogleAuthBtn navigation={navigation} />
                     <Text style={styles.tosText}>本サービスの利用開始をもって、{"\n"}
                         <Text style={styles.link}>利用規約</Text>
                         と<Text style={styles.link}>プライバシーポリシー</Text>

@@ -13,13 +13,20 @@ import Input3 from 'screens/registerInner/Input3'
 import Complete from 'screens/registerInner/Complete'
 
 import { Octicons } from '@expo/vector-icons';
-export default function Register({ navigation }: any) {
+export default function Register({ navigation, route }: any) {
+    // ユーザー情報の状態を追加
+    const [userInfo, setUserInfo] = useState(route.params.userInfo);
+
+    useEffect(() => {
+        console.log('userInfo:', userInfo);
+    }, [userInfo]);
+
     // コンテンツのリストを定義
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const contents = [
-        <Input1 setIsButtonDisabled={setIsButtonDisabled} />,
+        <Input1 userInfo={userInfo} setUserInfo={setUserInfo} />,
         <Input2 setIsButtonDisabled={setIsButtonDisabled} />,
-        <Input3 />,
+        <Input3 setIsButtonDisabled={setIsButtonDisabled} />,
         <Complete />,
     ];
     // 現在のコンテンツのインデックスを追跡するための状態
@@ -128,4 +135,3 @@ const styles = StyleSheet.create({
     },
 
 });
-
