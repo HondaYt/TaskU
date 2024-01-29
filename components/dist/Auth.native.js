@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var react_1 = require("react");
 var google_signin_1 = require("@react-native-google-signin/google-signin");
-var supabase_1 = require("../utils/supabase");
+var supabase_1 = require("utils/supabase");
 function default_1(_a) {
     var _this = this;
     var navigation = _a.navigation;
@@ -69,6 +69,7 @@ function default_1(_a) {
                         _a = _b.sent(), data = _a.data, error = _a.error;
                         // console.log(error, data)
                         if (!error) {
+                            userInfo.user.id = data.user.id;
                             navigation.navigate('Register', { userInfo: userInfo });
                         }
                         return [3 /*break*/, 5];

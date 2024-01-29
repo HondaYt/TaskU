@@ -4,7 +4,7 @@ import {
     GoogleSigninButton,
     statusCodes,
 } from '@react-native-google-signin/google-signin'
-import { supabase } from '../utils/supabase'
+import { supabase } from 'utils/supabase'
 
 export default function ({ navigation }: any) {
     GoogleSignin.configure({
@@ -27,6 +27,7 @@ export default function ({ navigation }: any) {
                         })
                         // console.log(error, data)
                         if (!error) {
+                            userInfo.user.id = data.user.id;
                             navigation.navigate('Register', { userInfo })
                         }
                     } else {

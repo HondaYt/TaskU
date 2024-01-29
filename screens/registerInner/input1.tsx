@@ -1,9 +1,16 @@
-import React, { useId } from 'react';
-import { useEffect, useState, useRef } from 'react';
+import React, { useId, useState, useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { PropsWithChildren } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { supabase } from 'utils/supabase'
+import { Buffer } from 'buffer';
+import { decode as atob } from 'base-64';
+import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
+import * as ImageManipulator from 'expo-image-manipulator';
+
 import {
     ScrollView,
     Animated,
@@ -13,13 +20,12 @@ import {
     Dimensions,
     Button,
     Image,
+    TextInput,
+    TouchableOpacity,
+    Platform,
+    Alert
 } from 'react-native';
 
-import AttributeBtn from 'components/AttributeBtn'
-
-const { width } = Dimensions.get('window');
-// ボタンの幅（または高さ）を計算
-const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
 
 interface RegisterInput1Props {
     userInfo: any;
@@ -27,18 +33,103 @@ interface RegisterInput1Props {
 }
 
 export default function registerInput1({ userInfo, setUserInfo }: RegisterInput1Props) {
-    // ユーザー名と画像URLを取得
-    const userName = userInfo?.user?.name;
-    const userImage = userInfo?.user?.photo;
+    const [userName, setUserName] = useState(userInfo?.user?.name);
+    const [userImage, setUserImage] = useState(userInfo?.user?.photo);
     const userId = userInfo?.user?.id;
+
+    useEffect(() => {
+        (async () => {
+            if (Platform.OS !== 'web') {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                    Alert.alert('Sorry, we need camera roll permissions to make this work!');
+                }
+            }
+        })();
+    }, []);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            // Resize the image
+            const manipResult = await ImageManipulator.manipulateAsync(
+                result.assets[0].uri,
+                [{ resize: { width: 500, height: 500 } }],
+                { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+            );
+
+            setUserImage(manipResult.uri);
+        }
+    };
+
+    const updateUserInfo = async () => {
+        const updatedUserInfo = { ...userInfo, user: { ...userInfo.user, name: userName } };
+        setUserInfo(updatedUserInfo);
+
+        // Determine the file extension
+        const fileExtension = userImage.split('.').pop();
+        const contentType = `image/${fileExtension}`;
+
+        // 1. Read the local image file
+        const asset = Asset.fromURI(userImage);
+        await asset.downloadAsync();
+        let base64Data = await FileSystem.readAsStringAsync(asset.localUri!, { encoding: FileSystem.EncodingType.Base64 });
+
+        const binaryData = Buffer.from(base64Data, 'base64');
+
+        // Remove the data URI scheme if present
+        const base64Prefix = 'data:image/${fileExtension};base64,';
+        if (base64Data.startsWith(base64Prefix)) {
+            base64Data = base64Data.substring(base64Prefix.length);
+        }
+
+        // 2. Upload the image to Supabase storage
+        const { data: uploadData, error: uploadError } = await supabase
+            .storage
+            .from('avatars')
+            .upload(`${userId}.${fileExtension}`, binaryData, { contentType, upsert: true });
+
+        if (uploadError) {
+            console.error('Error uploading image:', uploadError);
+            return;
+        }
+
+        // 3. Get the URL of the uploaded file
+        const { data: urlData } = await supabase
+            .storage
+            .from('avatars')
+            .getPublicUrl(`${userId}.${fileExtension}`);
+
+        const now = new Date();
+        const { data, error } = await supabase
+            .from('profiles')
+            .update({ username: userName, avatar_url: urlData.publicUrl, updated_at: now })
+            .eq('id', userId);
+
+        if (error) {
+            console.error('Error updating user info:', error);
+        } else {
+            console.log('User info updated:', data);
+        }
+    };
 
     return (
         <>
             <View style={styles.content}>
-                {/* ユーザー名と画像を表示 */}
-                <Text>{userName}</Text>
-                <Text>{userId}</Text>
-                <Image source={{ uri: userImage }} style={styles.userImage} />
+                <TextInput
+                    value={userName}
+                    onChangeText={setUserName}
+                />
+                <TouchableOpacity onPress={pickImage}>
+                    <Image source={{ uri: userImage }} style={styles.userImage} />
+                </TouchableOpacity>
+                <Button title="Update Info" onPress={updateUserInfo} />
             </View>
         </>
     );

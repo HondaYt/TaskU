@@ -16,6 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.hondayt.TaskU",
       "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "このアプリでは、ユーザーがプロフィール画像を選択できるようにするために、写真ライブラリへのアクセスが必要です。",
         "CFBundleURLTypes": [
           {
             "CFBundleURLSchemes": [

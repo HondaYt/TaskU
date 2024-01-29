@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { PropsWithChildren } from 'react';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
     ScrollView,

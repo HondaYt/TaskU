@@ -21,10 +21,14 @@ export default function Register({ navigation, route }: any) {
         console.log('userInfo:', userInfo);
     }, [userInfo]);
 
+    const updateUserInfo = (newUserInfo: any) => {
+        setUserInfo(newUserInfo);
+    };
+
     // コンテンツのリストを定義
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const contents = [
-        <Input1 userInfo={userInfo} setUserInfo={setUserInfo} />,
+        <Input1 userInfo={userInfo} setUserInfo={updateUserInfo} />,
         <Input2 setIsButtonDisabled={setIsButtonDisabled} />,
         <Input3 setIsButtonDisabled={setIsButtonDisabled} />,
         <Complete />,
@@ -105,7 +109,7 @@ export default function Register({ navigation, route }: any) {
                         title='次へ進む'
                         style={{ flex: 1 }}
                         onPress={handleNext}
-                        disabled={isButtonDisabled}
+                    // disabled={isButtonDisabled}
                     /> :
                     <Btn
                         title='TaskUを始める'
