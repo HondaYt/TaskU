@@ -1,4 +1,4 @@
-import React, { useId, useState, useEffect, useRef } from 'react';
+import React, { useId, useState, useEffect, useRef, } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import { decode as atob } from 'base-64';
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import * as ImageManipulator from 'expo-image-manipulator';
+
 
 import {
     ScrollView,
@@ -26,15 +27,20 @@ import {
     Alert
 } from 'react-native';
 
+import { useUserInfo } from 'components/UserInfoProvider';
+
 
 interface RegisterInput1Props {
+    setIsButtonDisabled: (disabled: boolean) => void;
     userInfo: any;
     setUserInfo: (userInfo: any) => void;
 }
 
-export default function registerInput1({ userInfo, setUserInfo }: RegisterInput1Props) {
-    const [userName, setUserName] = useState(userInfo?.user?.name);
-    const [userImage, setUserImage] = useState(userInfo?.user?.photo);
+export default function registerInput1() {
+
+    const { userInfo, setUserInfo } = useUserInfo();
+    const [userName, setUserName] = useState(userInfo?.username);
+    const [userImage, setUserImage] = useState(userInfo?.avatar_url);
     const userId = userInfo?.user?.id;
 
     useEffect(() => {
@@ -63,14 +69,11 @@ export default function registerInput1({ userInfo, setUserInfo }: RegisterInput1
                 [{ resize: { width: 500, height: 500 } }],
                 { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
             );
-
             setUserImage(manipResult.uri);
         }
     };
 
     const updateUserInfo = async () => {
-        const updatedUserInfo = { ...userInfo, user: { ...userInfo.user, name: userName } };
-        setUserInfo(updatedUserInfo);
 
         // Determine the file extension
         const fileExtension = userImage.split('.').pop();
@@ -106,6 +109,7 @@ export default function registerInput1({ userInfo, setUserInfo }: RegisterInput1
             .from('avatars')
             .getPublicUrl(`${userId}.${fileExtension}`);
 
+
         const now = new Date();
         const { data, error } = await supabase
             .from('profiles')
@@ -117,6 +121,20 @@ export default function registerInput1({ userInfo, setUserInfo }: RegisterInput1
         } else {
             console.log('User info updated:', data);
         }
+
+        const { data: updatedUserInfo, error: fetchError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+
+        if (fetchError) {
+            console.error('Error fetching updated user info:', fetchError);
+            return;
+        }
+
+        // ローカルの状態を更新
+        setUserInfo(updatedUserInfo);
     };
 
     return (

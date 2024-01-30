@@ -1,13 +1,40 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
 
-const Tasks = () => {
+import { supabase } from 'utils/supabase'
+import { useUserInfo } from 'components/UserInfoProvider';
+
+
+export default function Tasks() {
     const [tasks, setTasks] = useState<string[]>([]);
     const [input, setInput] = useState('');
 
-    const handleAddTask = () => {
-        setTasks([...tasks, input]);
-        setInput('');
+
+    const { userInfo } = useUserInfo();
+    const userId = userInfo?.user?.id;
+
+
+    const handleAddTask = async () => {
+        const newTask = input.trim();
+        if (newTask) {
+            // ローカルの状態を更新
+            setTasks([...tasks, newTask]);
+            setInput('');
+
+            try {
+                const { data, error } = await supabase
+                    .from('tasks')
+                    .insert([
+                        { title: newTask, user_id: userId, created_at: new Date() }
+                    ]);
+                if (error) throw error;
+                console.log('Task added:', data);
+                console.log(userId);
+
+            } catch (error) {
+                console.error('Error uploading task:', error);
+            }
+        }
     };
 
     const handleDeleteTask = (index: number) => {
@@ -56,5 +83,3 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 });
-
-export default Tasks;

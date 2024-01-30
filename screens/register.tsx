@@ -13,22 +13,14 @@ import Input3 from 'screens/registerInner/Input3'
 import Complete from 'screens/registerInner/Complete'
 
 import { Octicons } from '@expo/vector-icons';
-export default function Register({ navigation, route }: any) {
+export default function Register({ navigation }: any) {
     // ユーザー情報の状態を追加
-    const [userInfo, setUserInfo] = useState(route.params.userInfo);
 
-    useEffect(() => {
-        console.log('userInfo:', userInfo);
-    }, [userInfo]);
-
-    const updateUserInfo = (newUserInfo: any) => {
-        setUserInfo(newUserInfo);
-    };
 
     // コンテンツのリストを定義
-    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const contents = [
-        <Input1 userInfo={userInfo} setUserInfo={updateUserInfo} />,
+        <Input1 />,
         <Input2 setIsButtonDisabled={setIsButtonDisabled} />,
         <Input3 setIsButtonDisabled={setIsButtonDisabled} />,
         <Complete />,
@@ -57,9 +49,15 @@ export default function Register({ navigation, route }: any) {
     };
     const handlePrev = () => {
         setCurrentIndex(prevIndex => {
-            // 最初のコンテンツに達したらそれ以上インデックスを減らさない
             const nextIndex = prevIndex - 1;
-            return nextIndex >= 0 ? nextIndex : prevIndex;
+            if (nextIndex >= 0) {
+                // Input1に戻るときにボタンを有効にする
+                if (nextIndex === 0) {
+                    setIsButtonDisabled(false);
+                }
+                return nextIndex;
+            }
+            return prevIndex;
         });
     };
     const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -109,7 +107,7 @@ export default function Register({ navigation, route }: any) {
                         title='次へ進む'
                         style={{ flex: 1 }}
                         onPress={handleNext}
-                    // disabled={isButtonDisabled}
+                        disabled={isButtonDisabled}
                     /> :
                     <Btn
                         title='TaskUを始める'

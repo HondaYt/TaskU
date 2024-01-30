@@ -25,6 +25,8 @@ import BedtimeImg from 'img/BedTime.svg'
 
 export default function Main() {
 
+    const [userInfo, setUserInfo] = useState(null);
+
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [isTimerZero, setIsTimerZero] = useState(false);
 
@@ -65,7 +67,7 @@ export default function Main() {
                         />
                         <Tab.Screen
                             name="Tasks"
-                            component={Tasks}
+                            children={() => <Tasks />}
                             options={{
                                 tabBarLabel: 'タスク', tabBarIcon: ({ color }) => (
                                     <Octicons name="paste" size={24} color={color} />

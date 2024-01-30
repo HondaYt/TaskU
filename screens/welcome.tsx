@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
@@ -10,7 +10,8 @@ import {
 import Btn from 'components/Btn'
 import GoogleAuthBtn from 'components/Auth.native';
 
-export default function App({ navigation }: any) {
+export default function Welcome({ navigation }: any) {
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
             <View style={styles.content}>

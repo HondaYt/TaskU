@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -44,14 +55,13 @@ var FileSystem = require("expo-file-system");
 var expo_asset_1 = require("expo-asset");
 var ImageManipulator = require("expo-image-manipulator");
 var react_native_1 = require("react-native");
-var UserInfoProvider_1 = require("components/UserInfoProvider");
-function registerInput1() {
+function registerInput1(_a) {
     var _this = this;
-    var _a;
-    var _b = UserInfoProvider_1.useUserInfo(), userInfo = _b.userInfo, setUserInfo = _b.setUserInfo;
-    var _c = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.username), userName = _c[0], setUserName = _c[1];
-    var _d = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.avatar_url), userImage = _d[0], setUserImage = _d[1];
-    var userId = (_a = userInfo === null || userInfo === void 0 ? void 0 : userInfo.user) === null || _a === void 0 ? void 0 : _a.id;
+    var _b, _c, _d;
+    var userInfo = _a.userInfo, setUserInfo = _a.setUserInfo, setIsButtonDisabled = _a.setIsButtonDisabled;
+    var _e = react_1.useState((_b = userInfo === null || userInfo === void 0 ? void 0 : userInfo.user) === null || _b === void 0 ? void 0 : _b.name), userName = _e[0], setUserName = _e[1];
+    var _f = react_1.useState((_c = userInfo === null || userInfo === void 0 ? void 0 : userInfo.user) === null || _c === void 0 ? void 0 : _c.photo), userImage = _f[0], setUserImage = _f[1];
+    var userId = (_d = userInfo === null || userInfo === void 0 ? void 0 : userInfo.user) === null || _d === void 0 ? void 0 : _d.id;
     react_1.useEffect(function () {
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var status;
@@ -94,19 +104,21 @@ function registerInput1() {
         });
     }); };
     var updateUserInfo = function () { return __awaiter(_this, void 0, void 0, function () {
-        var fileExtension, contentType, asset, base64Data, binaryData, base64Prefix, _a, uploadData, uploadError, urlData, now, _b, data, error, _c, updatedUserInfo, fetchError;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var updatedUserInfo, fileExtension, contentType, asset, base64Data, binaryData, base64Prefix, _a, uploadData, uploadError, urlData, now, _b, data, error;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
+                    updatedUserInfo = __assign(__assign({}, userInfo), { user: __assign(__assign({}, userInfo.user), { name: userName }) });
+                    setUserInfo(updatedUserInfo);
                     fileExtension = userImage.split('.').pop();
                     contentType = "image/" + fileExtension;
                     asset = expo_asset_1.Asset.fromURI(userImage);
                     return [4 /*yield*/, asset.downloadAsync()];
                 case 1:
-                    _d.sent();
+                    _c.sent();
                     return [4 /*yield*/, FileSystem.readAsStringAsync(asset.localUri, { encoding: FileSystem.EncodingType.Base64 })];
                 case 2:
-                    base64Data = _d.sent();
+                    base64Data = _c.sent();
                     binaryData = buffer_1.Buffer.from(base64Data, 'base64');
                     base64Prefix = 'data:image/${fileExtension};base64,';
                     if (base64Data.startsWith(base64Prefix)) {
@@ -117,7 +129,7 @@ function registerInput1() {
                             .from('avatars')
                             .upload(userId + "." + fileExtension, binaryData, { contentType: contentType, upsert: true })];
                 case 3:
-                    _a = _d.sent(), uploadData = _a.data, uploadError = _a.error;
+                    _a = _c.sent(), uploadData = _a.data, uploadError = _a.error;
                     if (uploadError) {
                         console.error('Error uploading image:', uploadError);
                         return [2 /*return*/];
@@ -127,33 +139,20 @@ function registerInput1() {
                             .from('avatars')
                             .getPublicUrl(userId + "." + fileExtension)];
                 case 4:
-                    urlData = (_d.sent()).data;
+                    urlData = (_c.sent()).data;
                     now = new Date();
                     return [4 /*yield*/, supabase_1.supabase
                             .from('profiles')
                             .update({ username: userName, avatar_url: urlData.publicUrl, updated_at: now })
                             .eq('id', userId)];
                 case 5:
-                    _b = _d.sent(), data = _b.data, error = _b.error;
+                    _b = _c.sent(), data = _b.data, error = _b.error;
                     if (error) {
                         console.error('Error updating user info:', error);
                     }
                     else {
                         console.log('User info updated:', data);
                     }
-                    return [4 /*yield*/, supabase_1.supabase
-                            .from('profiles')
-                            .select('*')
-                            .eq('id', userId)
-                            .single()];
-                case 6:
-                    _c = _d.sent(), updatedUserInfo = _c.data, fetchError = _c.error;
-                    if (fetchError) {
-                        console.error('Error fetching updated user info:', fetchError);
-                        return [2 /*return*/];
-                    }
-                    // ローカルの状態を更新
-                    setUserInfo(updatedUserInfo);
                     return [2 /*return*/];
             }
         });

@@ -39,44 +39,55 @@ exports.__esModule = true;
 var react_1 = require("react");
 var google_signin_1 = require("@react-native-google-signin/google-signin");
 var supabase_1 = require("utils/supabase");
-function default_1(_a) {
+var UserInfoProvider_1 = require("components/UserInfoProvider");
+function Auth(_a) {
     var _this = this;
     var navigation = _a.navigation;
+    var setUserInfo = UserInfoProvider_1.useUserInfo().setUserInfo;
     google_signin_1.GoogleSignin.configure({
         scopes: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile', 'openid'],
         iosClientId: '679833251993-p0scalicgumkfp665pgcmhol5cvsri0d.apps.googleusercontent.com'
     });
     return (react_1["default"].createElement(google_signin_1.GoogleSigninButton, { size: google_signin_1.GoogleSigninButton.Size.Wide, color: google_signin_1.GoogleSigninButton.Color.Dark, onPress: function () { return __awaiter(_this, void 0, void 0, function () {
-            var userInfo, _a, data, error, error_1;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var userInfo, _a, data, error, _b, updatedUserInfo, fetchError, error_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _b.trys.push([0, 6, , 7]);
+                        _c.trys.push([0, 8, , 9]);
                         return [4 /*yield*/, google_signin_1.GoogleSignin.hasPlayServices()];
                     case 1:
-                        _b.sent();
+                        _c.sent();
                         return [4 /*yield*/, google_signin_1.GoogleSignin.signIn()];
                     case 2:
-                        userInfo = _b.sent();
-                        if (!userInfo.idToken) return [3 /*break*/, 4];
+                        userInfo = _c.sent();
+                        if (!userInfo.idToken) return [3 /*break*/, 6];
                         return [4 /*yield*/, supabase_1.supabase.auth.signInWithIdToken({
                                 provider: 'google',
                                 token: userInfo.idToken
-                            })
-                            // console.log(error, data)
-                        ];
+                            })];
                     case 3:
-                        _a = _b.sent(), data = _a.data, error = _a.error;
-                        // console.log(error, data)
-                        if (!error) {
-                            userInfo.user.id = data.user.id;
-                            navigation.navigate('Register', { userInfo: userInfo });
+                        _a = _c.sent(), data = _a.data, error = _a.error;
+                        if (!!error) return [3 /*break*/, 5];
+                        userInfo.user.id = data.user.id;
+                        return [4 /*yield*/, supabase_1.supabase
+                                .from('profiles')
+                                .select('*')
+                                .eq('id', userInfo.user.id)
+                                .single()];
+                    case 4:
+                        _b = _c.sent(), updatedUserInfo = _b.data, fetchError = _b.error;
+                        if (fetchError) {
+                            console.error('Error fetching updated user info:', fetchError);
+                            return [2 /*return*/];
                         }
-                        return [3 /*break*/, 5];
-                    case 4: throw new Error('no ID token present!');
+                        setUserInfo(updatedUserInfo);
+                        navigation.navigate('Register');
+                        _c.label = 5;
                     case 5: return [3 /*break*/, 7];
-                    case 6:
-                        error_1 = _b.sent();
+                    case 6: throw new Error('no ID token present!');
+                    case 7: return [3 /*break*/, 9];
+                    case 8:
+                        error_1 = _c.sent();
                         if (error_1.code === google_signin_1.statusCodes.SIGN_IN_CANCELLED) {
                             // user cancelled the login flow
                         }
@@ -89,10 +100,10 @@ function default_1(_a) {
                         else {
                             // some other error happened
                         }
-                        return [3 /*break*/, 7];
-                    case 7: return [2 /*return*/];
+                        return [3 /*break*/, 9];
+                    case 9: return [2 /*return*/];
                 }
             });
         }); } }));
 }
-exports["default"] = default_1;
+exports["default"] = Auth;

@@ -6,7 +6,12 @@ import {
 } from '@react-native-google-signin/google-signin'
 import { supabase } from 'utils/supabase'
 
-export default function ({ navigation }: any) {
+import { useUserInfo } from 'components/UserInfoProvider';
+
+export default function Auth({ navigation }: any) {
+
+    const { setUserInfo } = useUserInfo();
+
     GoogleSignin.configure({
         scopes: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile', 'openid'],
         iosClientId: '679833251993-p0scalicgumkfp665pgcmhol5cvsri0d.apps.googleusercontent.com',
@@ -25,10 +30,19 @@ export default function ({ navigation }: any) {
                             provider: 'google',
                             token: userInfo.idToken,
                         })
-                        // console.log(error, data)
                         if (!error) {
                             userInfo.user.id = data.user.id;
-                            navigation.navigate('Register', { userInfo })
+                            const { data: updatedUserInfo, error: fetchError } = await supabase
+                                .from('profiles')
+                                .select('*')
+                                .eq('id', userInfo.user.id)
+                                .single();
+                            if (fetchError) {
+                                console.error('Error fetching updated user info:', fetchError);
+                                return;
+                            }
+                            setUserInfo(updatedUserInfo);
+                            navigation.navigate('Register')
                         }
                     } else {
                         throw new Error('no ID token present!')

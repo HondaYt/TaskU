@@ -3,8 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { PropsWithChildren } from 'react';
 
+import { supabase } from 'utils/supabase'
+
+
+
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+
 import {
+    Image,
     ScrollView,
     StatusBar,
     StyleSheet,
@@ -15,6 +21,7 @@ import {
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
 
+import { useUserInfo } from 'components/UserInfoProvider';
 
 import Welcome from 'screens/Welcome'
 import Register from 'screens/Register'
@@ -28,6 +35,11 @@ import FreeTimeImg from 'img/FreeTime.svg'
 
 export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
 
+    const { userInfo } = useUserInfo();
+    // userInfoが更新されるたびに、avatarUrlを更新
+
+    const avatarUrl = userInfo?.avatar_url;
+
     const currentDate = new Date();
     const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -40,8 +52,11 @@ export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: bool
                         <Text style={styles.headerText}>おはようございます</Text>
                         <Text style={styles.headerText}>今日は<Text style={styles.date}>{currentDate.getFullYear()}.{currentDate.getMonth() + 1}.{currentDate.getDate()} {daysOfWeek[currentDate.getDay()]}曜日</Text></Text>
                     </View>
-                    <View style={styles.userIcon}>
-                        <Octicons name="person" size={30} color="#fff" />
+                    <View style={styles.userAvatar}>
+                        <Image
+                            source={{ uri: avatarUrl }}
+                            style={{ width: '100%', height: '100%' }}
+                        />
                     </View>
                 </View>
                 <Text style={styles.sectionTtl}>今日の残り時間</Text>
@@ -88,12 +103,12 @@ export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: bool
 }
 const styles = StyleSheet.create({
 
-    userIcon: {
+    userAvatar: {
         width: 48,
-
+        overflow: 'hidden',
         height: 48,
         borderRadius: 50,
-        backgroundColor: '#61c2d5',
+        // backgroundColor: '#61c2d5',
         justifyContent: 'center',
         alignItems: 'center',
 
