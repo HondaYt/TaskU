@@ -47,11 +47,10 @@ var react_native_1 = require("react-native");
 var UserInfoProvider_1 = require("components/UserInfoProvider");
 function registerInput1() {
     var _this = this;
-    var _a;
-    var _b = UserInfoProvider_1.useUserInfo(), userInfo = _b.userInfo, setUserInfo = _b.setUserInfo;
-    var _c = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.username), userName = _c[0], setUserName = _c[1];
-    var _d = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.avatar_url), userImage = _d[0], setUserImage = _d[1];
-    var userId = (_a = userInfo === null || userInfo === void 0 ? void 0 : userInfo.user) === null || _a === void 0 ? void 0 : _a.id;
+    var _a = UserInfoProvider_1.useUserInfo(), userInfo = _a.userInfo, setUserInfo = _a.setUserInfo;
+    var _b = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.username), userName = _b[0], setUserName = _b[1];
+    var _c = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.avatar_url), userImage = _c[0], setUserImage = _c[1];
+    var userId = userInfo === null || userInfo === void 0 ? void 0 : userInfo.id;
     react_1.useEffect(function () {
         (function () { return __awaiter(_this, void 0, void 0, function () {
             var status;
@@ -119,6 +118,7 @@ function registerInput1() {
                 case 3:
                     _a = _d.sent(), uploadData = _a.data, uploadError = _a.error;
                     if (uploadError) {
+                        console.log("userId:", userId);
                         console.error('Error uploading image:', uploadError);
                         return [2 /*return*/];
                     }
@@ -149,6 +149,7 @@ function registerInput1() {
                 case 6:
                     _c = _d.sent(), updatedUserInfo = _c.data, fetchError = _c.error;
                     if (fetchError) {
+                        console.log("userId:", userId);
                         console.error('Error fetching updated user info:', fetchError);
                         return [2 /*return*/];
                     }

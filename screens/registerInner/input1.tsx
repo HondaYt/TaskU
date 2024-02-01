@@ -41,7 +41,7 @@ export default function registerInput1() {
     const { userInfo, setUserInfo } = useUserInfo();
     const [userName, setUserName] = useState(userInfo?.username);
     const [userImage, setUserImage] = useState(userInfo?.avatar_url);
-    const userId = userInfo?.user?.id;
+    const userId = userInfo?.id;
 
     useEffect(() => {
         (async () => {
@@ -99,6 +99,7 @@ export default function registerInput1() {
             .upload(`${userId}.${fileExtension}`, binaryData, { contentType, upsert: true });
 
         if (uploadError) {
+            console.log("userId:", userId);
             console.error('Error uploading image:', uploadError);
             return;
         }
@@ -129,6 +130,7 @@ export default function registerInput1() {
             .single();
 
         if (fetchError) {
+            console.log("userId:", userId);
             console.error('Error fetching updated user info:', fetchError);
             return;
         }
