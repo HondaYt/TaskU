@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { PropsWithChildren } from 'react';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import {
     ScrollView,
@@ -54,7 +53,7 @@ export default function NextTask(props: nextTaskProps) {
                     <Text style={styles.taskTtl}>{props.taskTtl}</Text>
                     <View style={{ flexDirection: 'row', gap: 8 }}>
                         <View style={styles.TaskDetail}>
-                            <Text style={styles.DetailTtl}>重要度:</Text>
+                            <Text style={styles.DetailTtl}>優先度:</Text>
                             <View style={[styles.taskImportanceWrap, { backgroundColor: importanceColor }]}>
                                 <Text style={styles.taskImportance}>{props.taskImportance}</Text>
                             </View>

@@ -40,7 +40,7 @@ export default function registerInput1() {
 
     const { userInfo, setUserInfo } = useUserInfo();
     const [userName, setUserName] = useState(userInfo?.username);
-    const [userImage, setUserImage] = useState(userInfo?.avatar_url);
+    const [userImage, setUserImage] = useState<string>(userInfo?.avatar_url ? `${userInfo.avatar_url}?timestamp=${new Date().getTime()}` : '');
     const userId = userInfo?.id;
 
     useEffect(() => {
@@ -74,69 +74,70 @@ export default function registerInput1() {
     };
 
     const updateUserInfo = async () => {
+        if (userImage !== undefined) {
+            // Determine the file extension
+            const fileExtension = userImage.split('.').pop();
+            const contentType = `image/${fileExtension}`;
 
-        // Determine the file extension
-        const fileExtension = userImage.split('.').pop();
-        const contentType = `image/${fileExtension}`;
+            // 1. Read the local image file
+            const asset = Asset.fromURI(userImage);
+            await asset.downloadAsync();
+            let base64Data = await FileSystem.readAsStringAsync(asset.localUri!, { encoding: FileSystem.EncodingType.Base64 });
 
-        // 1. Read the local image file
-        const asset = Asset.fromURI(userImage);
-        await asset.downloadAsync();
-        let base64Data = await FileSystem.readAsStringAsync(asset.localUri!, { encoding: FileSystem.EncodingType.Base64 });
+            const binaryData = Buffer.from(base64Data, 'base64');
 
-        const binaryData = Buffer.from(base64Data, 'base64');
+            // Remove the data URI scheme if present
+            const base64Prefix = 'data:image/${fileExtension};base64,';
+            if (base64Data.startsWith(base64Prefix)) {
+                base64Data = base64Data.substring(base64Prefix.length);
+            }
 
-        // Remove the data URI scheme if present
-        const base64Prefix = 'data:image/${fileExtension};base64,';
-        if (base64Data.startsWith(base64Prefix)) {
-            base64Data = base64Data.substring(base64Prefix.length);
+            // 2. Upload the image to Supabase storage
+            const { data: uploadData, error: uploadError } = await supabase
+                .storage
+                .from('avatars')
+                .upload(`${userId}.${fileExtension}`, binaryData, { contentType, upsert: true });
+
+            if (uploadError) {
+                console.log("userId:", userId);
+                console.error('Error uploading image:', uploadError);
+                return;
+            }
+
+            // 3. Get the URL of the uploaded file
+            const { data: urlData } = await supabase
+                .storage
+                .from('avatars')
+                .getPublicUrl(`${userId}.${fileExtension}`);
+
+
+            const now = new Date();
+            const { data, error } = await supabase
+                .from('profiles')
+                .update({ username: userName, avatar_url: urlData.publicUrl, updated_at: now })
+                .eq('id', userId);
+
+            if (error) {
+                console.error('Error updating user info:', error);
+            } else {
+                console.log('User info updated:', data);
+            }
+
+            const { data: updatedUserInfo, error: fetchError } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
+
+            if (fetchError) {
+                console.log("userId:", userId);
+                console.error('Error fetching updated user info:', fetchError);
+                return;
+            }
+
+            // ローカルの状態を更新
+            setUserInfo(updatedUserInfo);
         }
-
-        // 2. Upload the image to Supabase storage
-        const { data: uploadData, error: uploadError } = await supabase
-            .storage
-            .from('avatars')
-            .upload(`${userId}.${fileExtension}`, binaryData, { contentType, upsert: true });
-
-        if (uploadError) {
-            console.log("userId:", userId);
-            console.error('Error uploading image:', uploadError);
-            return;
-        }
-
-        // 3. Get the URL of the uploaded file
-        const { data: urlData } = await supabase
-            .storage
-            .from('avatars')
-            .getPublicUrl(`${userId}.${fileExtension}`);
-
-
-        const now = new Date();
-        const { data, error } = await supabase
-            .from('profiles')
-            .update({ username: userName, avatar_url: urlData.publicUrl, updated_at: now })
-            .eq('id', userId);
-
-        if (error) {
-            console.error('Error updating user info:', error);
-        } else {
-            console.log('User info updated:', data);
-        }
-
-        const { data: updatedUserInfo, error: fetchError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single();
-
-        if (fetchError) {
-            console.log("userId:", userId);
-            console.error('Error fetching updated user info:', fetchError);
-            return;
-        }
-
-        // ローカルの状態を更新
-        setUserInfo(updatedUserInfo);
     };
 
     return (

@@ -9,9 +9,8 @@ var NextTask_1 = require("components/NextTask");
 var FreeTime_svg_1 = require("img/FreeTime.svg");
 function Home(_a) {
     var setIsTimerZero = _a.setIsTimerZero;
-    var userInfo = UserInfoProvider_1.useUserInfo().userInfo;
-    // userInfoが更新されるたびに、avatarUrlを更新
-    var avatarUrl = userInfo === null || userInfo === void 0 ? void 0 : userInfo.avatar_url;
+    var _b = UserInfoProvider_1.useUserInfo(), userInfo = _b.userInfo, getAvatarUrl = _b.getAvatarUrl;
+    var avatarUrl = getAvatarUrl();
     var currentDate = new Date();
     var daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
     return (react_1["default"].createElement(react_native_1.View, { style: { backgroundColor: '#fff' } },

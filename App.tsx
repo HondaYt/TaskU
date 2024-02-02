@@ -6,6 +6,8 @@ import { Appearance } from 'react-native';
 
 
 import { UserInfoProvider } from 'components/UserInfoProvider'
+import { UserTimezoneDateProvider } from 'components/UserTimezoneDateProvider'
+
 import Welcome from 'screens/Welcome'
 import Main from 'screens/Main'
 import Register from 'screens/Register'
@@ -16,17 +18,19 @@ export default function App({ userInfo, setUserInfo }: any) {
     return (
         <SafeAreaProvider>
             <UserInfoProvider>
-                <NavigationContainer>
-                    <Stack.Navigator
-                        screenOptions={{
-                            headerShown: false,
-                            gestureEnabled: false,
-                        }}>
-                        <Stack.Screen name="Welcome" component={Welcome} />
-                        <Stack.Screen name="Register" component={Register} />
-                        <Stack.Screen name="Main" component={Main} />
-                    </Stack.Navigator>
-                </NavigationContainer>
+                <UserTimezoneDateProvider>
+                    <NavigationContainer>
+                        <Stack.Navigator
+                            screenOptions={{
+                                headerShown: false,
+                                gestureEnabled: false,
+                            }}>
+                            <Stack.Screen name="Welcome" component={Welcome} />
+                            <Stack.Screen name="Register" component={Register} />
+                            <Stack.Screen name="Main" component={Main} />
+                        </Stack.Navigator>
+                    </NavigationContainer>
+                </UserTimezoneDateProvider>
             </UserInfoProvider>
         </SafeAreaProvider>
     );

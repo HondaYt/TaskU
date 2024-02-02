@@ -35,10 +35,11 @@ import FreeTimeImg from 'img/FreeTime.svg'
 
 export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
 
-    const { userInfo } = useUserInfo();
-    // userInfoが更新されるたびに、avatarUrlを更新
+    const { userInfo, getAvatarUrl } = useUserInfo();
 
-    const avatarUrl = userInfo?.avatar_url;
+
+    const avatarUrl = getAvatarUrl();
+
 
     const currentDate = new Date();
     const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];

@@ -1,62 +1,92 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TextInput, Button } from 'react-native';
 
-import { supabase } from 'utils/supabase'
+import { supabase } from 'utils/supabase';
 import { useUserInfo } from 'components/UserInfoProvider';
+import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateProvider';
 
+interface Task {
+    id: number;
+    title: string;
+    created_at: string;
+    updated_at: string;
+}
 
 export default function Tasks() {
-    const [tasks, setTasks] = useState<string[]>([]);
-    const [input, setInput] = useState('');
+    const { userInfo, setUserInfo } = useUserInfo();
+    const { formatAndSaveDate, formattedDates } = useUserTimezoneDateFormatter();
 
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [title, setTitle] = useState('');
+    const userId = userInfo?.id;
 
-    const { userInfo } = useUserInfo();
-    const userId = userInfo?.user?.id;
+    useEffect(() => {
+        fetchTasks();
+    }, []);
 
-
-    const handleAddTask = async () => {
-        const newTask = input.trim();
-        if (newTask) {
-            // ローカルの状態を更新
-            setTasks([...tasks, newTask]);
-            setInput('');
-
-            try {
-                const { data, error } = await supabase
-                    .from('tasks')
-                    .insert([
-                        { title: newTask, user_id: userId, created_at: new Date() }
-                    ]);
-                if (error) throw error;
-                console.log('Task added:', data);
-                console.log(userId);
-
-            } catch (error) {
-                console.error('Error uploading task:', error);
-            }
+    const fetchTasks = async () => {
+        let { data: tasks, error } = await supabase
+            .from('tasks')
+            .select('*')
+            .eq('user_id', userId);
+        if (tasks) {
+            setTasks(tasks || []);
+            tasks.forEach(task => {
+                formatAndSaveDate(task.created_at);
+            });
         }
     };
 
-    const handleDeleteTask = (index: number) => {
-        setTasks(tasks.filter((task, i) => i !== index));
-    };
+    const addTask = async () => {
+        const { data, error } = await supabase
+            .from('tasks')
+            .insert([
+                { title: title, user_id: userId, created_at: new Date() }
+            ]);
 
+        if (error) console.error('error', error);
+        else {
+            setTitle('');
+            fetchTasks();
+        }
+    };
+    const deleteTask = async (taskId: number) => {
+        const { data, error } = await supabase
+            .from('tasks')
+            .delete()
+            .match({ id: taskId });
+
+        if (error) {
+            console.error('error', error);
+        } else {
+            fetchTasks();
+        }
+    };
     return (
         <View style={styles.container}>
             <TextInput
                 style={styles.input}
-                value={input}
-                onChangeText={setInput}
-                placeholder="新しいタスクを入力"
+                onChangeText={setTitle}
+                value={title}
+                placeholder="タスクを入力"
             />
-            <Button title="タスクを追加" onPress={handleAddTask} />
+            <Button
+                onPress={addTask}
+                title="タスクを追加"
+                color="#841584"
+            />
             <FlatList
                 data={tasks}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) => (
-                    <View style={styles.task}>
-                        <Text>{item}</Text>
-                        <Button title="削除" onPress={() => handleDeleteTask(index)} />
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.taskItem}>
+                        <Text style={styles.taskTitle}>{item.title}</Text>
+                        <Text>{`Created at: ${formattedDates[item.created_at] || item.created_at}`}</Text>
+                        <Button
+                            onPress={() => deleteTask(item.id)}
+                            title="削除"
+                            color="#ff0000"
+                        />
                     </View>
                 )}
             />
@@ -72,14 +102,16 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 40,
-        borderColor: 'gray',
+        margin: 12,
         borderWidth: 1,
-        marginBottom: 10,
+        padding: 10,
     },
-    task: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10,
+    taskItem: {
+        padding: 20,
+        marginVertical: 8,
+        backgroundColor: "#f9c2ff",
+    },
+    taskTitle: {
+        fontSize: 18,
     },
 });

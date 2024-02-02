@@ -5,7 +5,7 @@ var native_stack_1 = require("@react-navigation/native-stack");
 var react_native_1 = require("react-native");
 var Btn_1 = require("components/Btn");
 var Stack = native_stack_1.createNativeStackNavigator();
-function CurrentTask(props) {
+function NextTask(props) {
     var taskImportance = props.taskImportance;
     // 重要度によって色を変える
     var importanceColor;
@@ -25,22 +25,23 @@ function CurrentTask(props) {
         react_1["default"].createElement(react_native_1.View, { style: { flexDirection: "row", alignItems: "flex-end", justifyContent: 'space-between' } },
             react_1["default"].createElement(react_native_1.View, null,
                 react_1["default"].createElement(react_native_1.Text, { style: styles.taskGenre }, props.taskGenre),
-                react_1["default"].createElement(react_native_1.Text, { style: styles.taskTtl }, props.taskTtl)),
-            react_1["default"].createElement(react_native_1.View, null,
-                react_1["default"].createElement(react_native_1.View, { style: [styles.TaskDetail] },
-                    react_1["default"].createElement(react_native_1.Text, { style: styles.DetailTtl }, "\u512A\u5148\u5EA6:"),
-                    react_1["default"].createElement(react_native_1.View, { style: [styles.taskImportanceWrap, { backgroundColor: importanceColor }] },
-                        react_1["default"].createElement(react_native_1.Text, { style: styles.taskImportance }, props.taskImportance))),
-                react_1["default"].createElement(react_native_1.View, { style: styles.TaskDetail },
-                    react_1["default"].createElement(react_native_1.Text, { style: styles.DetailTtl }, "\u671F\u9650:"),
-                    react_1["default"].createElement(react_native_1.Text, { style: styles.taskDeadline }, props.taskDeadline)))),
-        react_1["default"].createElement(react_native_1.View, { style: styles.btnContainer },
-            react_1["default"].createElement(Btn_1["default"], { title: "\u5B8C\u4E86", style: { flex: 1, backgroundColor: '#764bda' }, onPress: function () { } }),
-            react_1["default"].createElement(Btn_1["default"], { title: "\u5F8C\u306B\u56DE\u3059", style: { width: 100, backgroundColor: '#888' }, onPress: function () { } }))));
+                react_1["default"].createElement(react_native_1.Text, { style: styles.taskTtl }, props.taskTtl),
+                react_1["default"].createElement(react_native_1.View, { style: { flexDirection: 'row', gap: 8 } },
+                    react_1["default"].createElement(react_native_1.View, { style: styles.TaskDetail },
+                        react_1["default"].createElement(react_native_1.Text, { style: styles.DetailTtl }, "\u512A\u5148\u5EA6:"),
+                        react_1["default"].createElement(react_native_1.View, { style: [styles.taskImportanceWrap, { backgroundColor: importanceColor }] },
+                            react_1["default"].createElement(react_native_1.Text, { style: styles.taskImportance }, props.taskImportance))),
+                    react_1["default"].createElement(react_native_1.View, { style: styles.TaskDetail },
+                        react_1["default"].createElement(react_native_1.Text, { style: styles.DetailTtl }, "\u671F\u9650:"),
+                        react_1["default"].createElement(react_native_1.Text, { style: styles.taskDeadline }, props.taskDeadline))))),
+        react_1["default"].createElement(Btn_1["default"], { title: "\u5F8C\u306B\u56DE\u3059", textStyle: { fontSize: 18 }, style: { width: 90, backgroundColor: '#888' }, onPress: function () { } })));
 }
-exports["default"] = CurrentTask;
+exports["default"] = NextTask;
 var styles = react_native_1.StyleSheet.create({
     currentTask: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 10,
@@ -53,12 +54,12 @@ var styles = react_native_1.StyleSheet.create({
         }
     },
     taskGenre: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         color: '#555'
     },
     taskTtl: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold'
     },
     TaskDetail: {

@@ -35,69 +35,91 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 exports.__esModule = true;
 var react_1 = require("react");
 var react_native_1 = require("react-native");
 var supabase_1 = require("utils/supabase");
 var UserInfoProvider_1 = require("components/UserInfoProvider");
+var UserTimezoneDateProvider_1 = require("components/UserTimezoneDateProvider");
 function Tasks() {
     var _this = this;
-    var _a;
-    var _b = react_1.useState([]), tasks = _b[0], setTasks = _b[1];
-    var _c = react_1.useState(''), input = _c[0], setInput = _c[1];
-    var userInfo = UserInfoProvider_1.useUserInfo().userInfo;
-    var userId = (_a = userInfo === null || userInfo === void 0 ? void 0 : userInfo.user) === null || _a === void 0 ? void 0 : _a.id;
-    var handleAddTask = function () { return __awaiter(_this, void 0, void 0, function () {
-        var newTask, _a, data, error, error_1;
+    var _a = UserInfoProvider_1.useUserInfo(), userInfo = _a.userInfo, setUserInfo = _a.setUserInfo;
+    var _b = UserTimezoneDateProvider_1.useUserTimezoneDateFormatter(), formatAndSaveDate = _b.formatAndSaveDate, formattedDates = _b.formattedDates;
+    var _c = react_1.useState([]), tasks = _c[0], setTasks = _c[1];
+    var _d = react_1.useState(''), title = _d[0], setTitle = _d[1];
+    var userId = userInfo === null || userInfo === void 0 ? void 0 : userInfo.id;
+    react_1.useEffect(function () {
+        fetchTasks();
+    }, []);
+    var fetchTasks = function () { return __awaiter(_this, void 0, void 0, function () {
+        var _a, tasks, error;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0:
-                    newTask = input.trim();
-                    if (!newTask) return [3 /*break*/, 4];
-                    // ローカルの状態を更新
-                    setTasks(__spreadArrays(tasks, [newTask]));
-                    setInput('');
-                    _b.label = 1;
+                case 0: return [4 /*yield*/, supabase_1.supabase
+                        .from('tasks')
+                        .select('*')
+                        .eq('user_id', userId)];
                 case 1:
-                    _b.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, supabase_1.supabase
-                            .from('tasks')
-                            .insert([
-                            { title: newTask, user_id: userId, created_at: new Date() }
-                        ])];
-                case 2:
-                    _a = _b.sent(), data = _a.data, error = _a.error;
-                    if (error)
-                        throw error;
-                    console.log('Task added:', data);
-                    console.log(userId);
-                    return [3 /*break*/, 4];
-                case 3:
-                    error_1 = _b.sent();
-                    console.error('Error uploading task:', error_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    _a = _b.sent(), tasks = _a.data, error = _a.error;
+                    if (tasks) {
+                        setTasks(tasks || []);
+                        tasks.forEach(function (task) {
+                            formatAndSaveDate(task.created_at);
+                        });
+                    }
+                    return [2 /*return*/];
             }
         });
     }); };
-    var handleDeleteTask = function (index) {
-        setTasks(tasks.filter(function (task, i) { return i !== index; }));
-    };
+    var addTask = function () { return __awaiter(_this, void 0, void 0, function () {
+        var _a, data, error;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, supabase_1.supabase
+                        .from('tasks')
+                        .insert([
+                        { title: title, user_id: userId, created_at: new Date() }
+                    ])];
+                case 1:
+                    _a = _b.sent(), data = _a.data, error = _a.error;
+                    if (error)
+                        console.error('error', error);
+                    else {
+                        setTitle('');
+                        fetchTasks();
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+    var deleteTask = function (taskId) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, data, error;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, supabase_1.supabase
+                        .from('tasks')["delete"]()
+                        .match({ id: taskId })];
+                case 1:
+                    _a = _b.sent(), data = _a.data, error = _a.error;
+                    if (error) {
+                        console.error('error', error);
+                    }
+                    else {
+                        fetchTasks();
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); };
     return (react_1["default"].createElement(react_native_1.View, { style: styles.container },
-        react_1["default"].createElement(react_native_1.TextInput, { style: styles.input, value: input, onChangeText: setInput, placeholder: "\u65B0\u3057\u3044\u30BF\u30B9\u30AF\u3092\u5165\u529B" }),
-        react_1["default"].createElement(react_native_1.Button, { title: "\u30BF\u30B9\u30AF\u3092\u8FFD\u52A0", onPress: handleAddTask }),
-        react_1["default"].createElement(react_native_1.FlatList, { data: tasks, keyExtractor: function (item, index) { return index.toString(); }, renderItem: function (_a) {
-                var item = _a.item, index = _a.index;
-                return (react_1["default"].createElement(react_native_1.View, { style: styles.task },
-                    react_1["default"].createElement(react_native_1.Text, null, item),
-                    react_1["default"].createElement(react_native_1.Button, { title: "\u524A\u9664", onPress: function () { return handleDeleteTask(index); } })));
+        react_1["default"].createElement(react_native_1.TextInput, { style: styles.input, onChangeText: setTitle, value: title, placeholder: "\u30BF\u30B9\u30AF\u3092\u5165\u529B" }),
+        react_1["default"].createElement(react_native_1.Button, { onPress: addTask, title: "\u30BF\u30B9\u30AF\u3092\u8FFD\u52A0", color: "#841584" }),
+        react_1["default"].createElement(react_native_1.FlatList, { data: tasks, keyExtractor: function (item) { return item.id.toString(); }, renderItem: function (_a) {
+                var item = _a.item;
+                return (react_1["default"].createElement(react_native_1.View, { style: styles.taskItem },
+                    react_1["default"].createElement(react_native_1.Text, { style: styles.taskTitle }, item.title),
+                    react_1["default"].createElement(react_native_1.Text, null, "Created at: " + (formattedDates[item.created_at] || item.created_at)),
+                    react_1["default"].createElement(react_native_1.Button, { onPress: function () { return deleteTask(item.id); }, title: "\u524A\u9664", color: "#ff0000" })));
             } })));
 }
 exports["default"] = Tasks;
@@ -110,14 +132,16 @@ var styles = react_native_1.StyleSheet.create({
     },
     input: {
         height: 40,
-        borderColor: 'gray',
+        margin: 12,
         borderWidth: 1,
-        marginBottom: 10
+        padding: 10
     },
-    task: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 10
+    taskItem: {
+        padding: 20,
+        marginVertical: 8,
+        backgroundColor: "#f9c2ff"
+    },
+    taskTitle: {
+        fontSize: 18
     }
 });

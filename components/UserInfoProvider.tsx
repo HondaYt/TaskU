@@ -1,25 +1,56 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 
+import * as Localization from 'expo-localization';
+
+interface UserInfo {
+    avatar_url: string;
+    id: string;
+    updated_at: string;
+    username: string;
+}
+
 // コンテキストの作成
 const UserInfoContext = createContext<{
-    userInfo: any;
-    setUserInfo: (userInfo: any) => void;
+    userInfo: UserInfo | null;
+    setUserInfo: (userInfo: UserInfo | null) => void;
+    updateUserInfo: (newData: Partial<UserInfo>) => void;
+    getAvatarUrl: () => string | undefined;
 }>({
     userInfo: null,
     setUserInfo: () => { },
+    updateUserInfo: (newData: Partial<UserInfo>) => { },
+    getAvatarUrl: () => undefined,
 });
 
-// プロバイダーコンポーネントの作成
-export const UserInfoProvider = ({ children }: any) => {
-    const [userInfo, setUserInfo] = useState(null);
+export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
+    const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+    // userInfoを更新する関数
+    const updateUserInfo = (newData: Partial<UserInfo>) => {
+        setUserInfo(prevUserInfo => {
+            // prevUserInfoがnullの場合にデフォルト値を提供
+            const defaultUserInfo: UserInfo = {
+                id: '',
+                avatar_url: '',
+                updated_at: '',
+                username: '',
+                ...prevUserInfo // prevUserInfoの値で上書き
+            };
+            return {
+                ...defaultUserInfo,
+                ...newData,
+            };
+        });
+    };
 
-    useEffect(() => {
-        console.log('userInfoが更新されました:', userInfo);
-    }, [userInfo]);
+    // アバターURLを取得する関数
+    const getAvatarUrl = () => {
+        if (!userInfo?.avatar_url) return undefined;
+        return `${userInfo.avatar_url}?timestamp=${new Date().getTime()}`;
+    };
 
 
     return (
-        <UserInfoContext.Provider value={{ userInfo, setUserInfo }}>
+        <UserInfoContext.Provider value={{ userInfo, setUserInfo, updateUserInfo, getAvatarUrl }}>
             {children}
         </UserInfoContext.Provider>
     );
@@ -33,3 +64,6 @@ export const useUserInfo = () => {
     }
     return context;
 };
+
+
+

@@ -53,7 +53,7 @@ export default function CurrentTask(props: CurrentTaskProps) {
                 </View>
                 <View>
                     <View style={[styles.TaskDetail]}>
-                        <Text style={styles.DetailTtl}>重要度:</Text>
+                        <Text style={styles.DetailTtl}>優先度:</Text>
                         <View style={[styles.taskImportanceWrap, { backgroundColor: importanceColor }]}>
                             <Text style={styles.taskImportance}>{props.taskImportance}</Text>
                         </View>

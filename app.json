@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.hondayt.TaskU",
@@ -40,6 +42,9 @@
       "eas": {
         "projectId": "82b07cb9-e83a-4ac4-9700-2e17be720154"
       }
-    }
+    },
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

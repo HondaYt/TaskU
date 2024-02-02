@@ -49,7 +49,7 @@ function registerInput1() {
     var _this = this;
     var _a = UserInfoProvider_1.useUserInfo(), userInfo = _a.userInfo, setUserInfo = _a.setUserInfo;
     var _b = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.username), userName = _b[0], setUserName = _b[1];
-    var _c = react_1.useState(userInfo === null || userInfo === void 0 ? void 0 : userInfo.avatar_url), userImage = _c[0], setUserImage = _c[1];
+    var _c = react_1.useState((userInfo === null || userInfo === void 0 ? void 0 : userInfo.avatar_url) ? userInfo.avatar_url + "?timestamp=" + new Date().getTime() : ''), userImage = _c[0], setUserImage = _c[1];
     var userId = userInfo === null || userInfo === void 0 ? void 0 : userInfo.id;
     react_1.useEffect(function () {
         (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -97,6 +97,7 @@ function registerInput1() {
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
+                    if (!(userImage !== undefined)) return [3 /*break*/, 7];
                     fileExtension = userImage.split('.').pop();
                     contentType = "image/" + fileExtension;
                     asset = expo_asset_1.Asset.fromURI(userImage);
@@ -155,7 +156,8 @@ function registerInput1() {
                     }
                     // ローカルの状態を更新
                     setUserInfo(updatedUserInfo);
-                    return [2 /*return*/];
+                    _d.label = 7;
+                case 7: return [2 /*return*/];
             }
         });
     }); };
