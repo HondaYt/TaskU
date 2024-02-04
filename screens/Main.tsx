@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Animated } from "react-native";
 import { SvgUri, SvgXml } from 'react-native-svg';
 
 
@@ -19,13 +19,14 @@ const Tab = createBottomTabNavigator();
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
-import { FAB } from 'react-native-paper';
 
+import AddTaskFAB from 'components/AddTaskFAB'
 import BedtimeImg from 'img/BedTime.svg'
 
 export default function Main() {
 
     const [userInfo, setUserInfo] = useState(null);
+
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [isTimerZero, setIsTimerZero] = useState(false);
@@ -46,6 +47,7 @@ export default function Main() {
         ),
         []
     );
+
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -85,12 +87,7 @@ export default function Main() {
                         />
                     </Tab.Navigator>
                 </SafeAreaView>
-                <FAB
-                    style={styles.fab}
-                    icon="plus"
-                    color="#fff"
-                    onPress={() => console.log('Pressed')}
-                />
+                <AddTaskFAB />
                 <BottomSheetModal
                     ref={bottomSheetModalRef}
                     index={0}
@@ -122,6 +119,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         margin: 16,
         right: 0,
-        bottom: 64 + 16,
+        bottom: 80,
     },
 });

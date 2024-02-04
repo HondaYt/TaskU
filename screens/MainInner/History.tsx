@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { PropsWithChildren } from 'react';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
+
 import {
     SafeAreaView,
     ScrollView,
@@ -27,7 +27,7 @@ export default function Top() {
     return (
         <View style={styles.content}>
             <View >
-                <Text>あああ</Text>
+                <Text>開発中</Text>
 
             </View>
         </View>

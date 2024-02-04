@@ -2,12 +2,6 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 
 import * as Localization from 'expo-localization';
 
-interface UserInfo {
-    avatar_url: string;
-    id: string;
-    updated_at: string;
-    username: string;
-}
 
 // コンテキストの作成
 const UserInfoContext = createContext<{
@@ -21,6 +15,22 @@ const UserInfoContext = createContext<{
     updateUserInfo: (newData: Partial<UserInfo>) => { },
     getAvatarUrl: () => undefined,
 });
+
+interface UserInfo {
+    avatar_url: string;
+    id: string;
+    updated_at: string;
+    username: string;
+}
+// コンテキストを使用するためのカスタムフック
+export const useUserInfo = () => {
+    const context = useContext(UserInfoContext);
+    if (!context) {
+        throw new Error('useUserInfo must be used within a UserInfoProvider');
+    }
+    return context;
+};
+
 
 export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
@@ -56,14 +66,6 @@ export const UserInfoProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
-// コンテキストを使用するためのカスタムフック
-export const useUserInfo = () => {
-    const context = useContext(UserInfoContext);
-    if (!context) {
-        throw new Error('useUserInfo must be used within a UserInfoProvider');
-    }
-    return context;
-};
 
 
 

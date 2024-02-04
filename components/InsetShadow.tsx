@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import type { PropsWithChildren } from 'react';
 import { Svg } from 'react-native-svg';
-import { PieChart, ProgressCircle } from 'react-native-svg-charts';
 import {
     SafeAreaView,
     Text,

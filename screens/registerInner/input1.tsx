@@ -168,5 +168,6 @@ const styles = StyleSheet.create({
         width: 100, // 画像の幅
         height: 100, // 画像の高さ
         borderRadius: 50, // 画像を円形にする
+        backgroundColor: '#ccc',
     },
 });
