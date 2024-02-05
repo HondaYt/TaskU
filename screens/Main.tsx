@@ -19,14 +19,16 @@ const Tab = createBottomTabNavigator();
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
+import { useTasks } from 'components/TaskProvider';
 
 import AddTaskFAB from 'components/AddTaskFAB'
 import BedtimeImg from 'img/BedTime.svg'
 
+
+
 export default function Main() {
 
-    const [userInfo, setUserInfo] = useState(null);
-
+    const { tasks, fetchTasks } = useTasks();
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [isTimerZero, setIsTimerZero] = useState(false);

@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
         height: 8,
         borderTopRightRadius: 4,
         borderBottomRightRadius: 4,
-        backgroundColor: '#FFB6B6',
+        backgroundColor: '#67DD73',
     },
     registerIndicator: {
         backgroundColor: '#fff',

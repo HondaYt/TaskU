@@ -29,20 +29,25 @@ export const UserTimezoneDateProvider = ({ children }: { children: ReactNode }) 
         return cachedTimezone;
     }
 
-    const formatCreatedAt = async (createdAt: string) => {
+    const formatCreatedAt = async (createdAt: string, includeTime: boolean = true) => {
         const userTimezone = await getUserTimezone();
         const date = new Date(createdAt);
-        const formatter = new Intl.DateTimeFormat('default', {
+        const options: Intl.DateTimeFormatOptions = {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
             timeZone: userTimezone,
-        });
+        };
+        if (includeTime) {
+            options.hour = '2-digit';
+            options.minute = '2-digit';
+            // options.second = '2-digit'; // 秒を含める場合はこのコメントを解除
+        }
+        const formatter = new Intl.DateTimeFormat('default', options);
         return formatter.format(date);
     };
+
+
     return (
         <UserTimezoneDateFormatterContext.Provider value={{ formatAndSaveDate, formattedDates }}>
             {children}

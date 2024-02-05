@@ -1,45 +1,67 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import type { PropsWithChildren } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
+import { StyleSheet, FlatList } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
-import {
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    useColorScheme,
-    View,
-    TouchableOpacity
-} from 'react-native';
+import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateProvider';
+import { useTasks } from 'components/TaskProvider';
+import { View } from 'react-native';
+import Task from 'components/Task';
+
+export default function Tasks() {
 
 
-import Welcome from 'screens/Welcome'
-import Register from 'screens/Register'
+    const { tasks, setTasks, fetchTasks } = useTasks();
 
-const Stack = createNativeStackNavigator();
 
-export default function Top() {
+
+    const renderItemSeparator = () => {
+        return <View style={{ height: 16 }} />;
+    };
+    useFocusEffect(
+        useCallback(() => {
+            fetchTasks();
+        }, [])
+    );
+
+    const sortedTasks = useMemo(() => {
+        if (!tasks) return []; // tasks が null の場合は空の配列を返す
+
+        return [...tasks]
+            .filter(task => task.status === 'completed')
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }, [tasks]);
 
     return (
         <View style={styles.content}>
-            <View >
-                <Text>開発中</Text>
-
-            </View>
+            <FlatList
+                data={sortedTasks}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={styles.container}
+                renderItem={({ item }) => (
+                    <Task
+                        task={item}
+                        genre={item.genre}
+                        title={item.title}
+                        priority={item.priority}
+                        deadline={new Date(item.deadline)}
+                        time_required={item.time_required}
+                    />
+                )}
+                ItemSeparatorComponent={renderItemSeparator}
+            />
         </View>
     );
-}
+};
+
 const styles = StyleSheet.create({
     content: {
-        // justifyContent: "space-between",
         flex: 1,
         backgroundColor: "#fff",
-        paddingTop: 8,
-        paddingLeft: 16,
-        paddingRight: 16,
+    },
+    container: {
+        flexGrow: 1,
+        padding: 16,
+        paddingBottom: 90,
+        backgroundColor: "#fff",
     },
 });

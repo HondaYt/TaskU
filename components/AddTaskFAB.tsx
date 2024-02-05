@@ -1,39 +1,65 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Animated, TextInput, Button } from 'react-native';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Animated, TextInput, Button, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { Octicons } from '@expo/vector-icons';
 
 import { useTasks } from 'components/TaskProvider';
 
 const AddTaskFAB = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isViewVisible, setIsViewVisible] = useState(false);
-    // useRefを使用してAnimated.Valueを初期化
+
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const widthAnim = useRef(new Animated.Value(0)).current;
 
-    const [isExpanded, setIsExpanded] = useState(false);
-
-    const { addTask } = useTasks(); // useTasksフックを使用してタスク関連の機能を取得
+    const { tasks, addTask, genres, fetchGenres } = useTasks();
     const [title, setTitle] = useState('');
+
     const [genre, setGenre] = useState('');
-    const [deadline, setDeadline] = useState('');
     const [status, setStatus] = useState('');
-    const [priority, setPriority] = useState('');
     const [time_required, setTimeRequired] = useState('');
+    const [deadline, setDeadline] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [priority, setPriority] = useState('medium');
 
+    const [openGenre, setOpenGenre] = useState(false);
+    const [openPriority, setOpenPriority] = useState(false);
+    const [itemsForGenre, setItemsForGenre] = useState(genres.map(genre => ({ label: genre, value: genre })));
+    const [itemsForPriority, setItemsForPriority] = useState([
+        { label: '低', value: 'low' },
+        { label: '中', value: 'medium' },
+        { label: '高', value: 'high' }
+    ]);
 
-    const handleAddTask = async () => {
+    const onChange = useCallback((event: any, selectedDate: any) => {
+        const currentDate = selectedDate instanceof Date ? selectedDate : deadline;
+        setShowDatePicker(Platform.OS === 'ios');
+        setDeadline(currentDate);
+    }, [deadline]);
+
+    const handleAddTask = useCallback(async () => {
         if (title.trim() !== '') {
+
             const deadlineDate = new Date(deadline);
             await addTask(title, genre, deadlineDate, status, priority, parseInt(time_required, 10));
-            setTitle(''); // タイトルをリセット
+            setTitle('');
+            setGenre('');
+            setDeadline(new Date());
+            setStatus('');
+            setPriority('medium');
+            setTimeRequired('');
+            setIsOpen(false);
+
         } else {
             alert('タイトルを入力してください');
         }
-    };
+    }, [title, genre, deadline, status, priority, time_required, addTask]);
+
+    const toggleFAB = useCallback(() => {
+        setIsOpen(prevState => !prevState);
+    }, []);
 
     useEffect(() => {
-        // isOpenが変更されたときにアニメーションをトリガー
         Animated.parallel([
             Animated.timing(widthAnim, {
                 toValue: isOpen ? 1 : 0,
@@ -46,14 +72,7 @@ const AddTaskFAB = () => {
                 useNativeDriver: true,
             }),
         ]).start();
-    }, [isOpen]); // isOpenが変更されるたびに実行
-
-    const toggleFAB = () => {
-        setIsOpen(!isOpen);
-        setIsViewVisible(!isViewVisible);
-        setIsExpanded(!isExpanded); // 状態を更新してコンテナのサイズを切り替える
-
-    };
+    }, [isOpen]);
 
     const labelWidth = widthAnim.interpolate({
         inputRange: [0, 1],
@@ -64,11 +83,14 @@ const AddTaskFAB = () => {
         outputRange: ['0deg', '135deg'],
     });
 
-
     return (
-        <TouchableOpacity activeOpacity={1} onPress={toggleFAB} style={[styles.container, isExpanded ? styles.expandedContainer : null]}>
-            {isViewVisible && (
-                <View style={styles.modal}>
+        <TouchableOpacity activeOpacity={1} onPress={toggleFAB} style={[styles.container, isOpen ? styles.expandedContainer : null]}>
+            {isOpen && (
+                <TouchableOpacity
+                    style={styles.modal}
+                    activeOpacity={1}
+                    onPress={() => { }}
+                >
                     <View>
                         <TextInput
                             style={styles.input}
@@ -82,23 +104,35 @@ const AddTaskFAB = () => {
                             value={genre}
                             placeholder="ジャンル"
                         />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setDeadline}
-                            value={deadline}
-                            placeholder="締め切り"
+                        <DropDownPicker
+                            open={openGenre}
+                            value={genre}
+                            items={itemsForGenre}
+                            setOpen={setOpenGenre}
+                            setValue={setGenre}
+                            setItems={setItemsForGenre}
+                            zIndex={3000}
+                            zIndexInverse={1000}
                         />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setStatus}
-                            value={status}
-                            placeholder="ステータス"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setPriority}
+                        <View>
+                            <DateTimePicker
+                                testID="dateTimePicker"
+                                value={deadline}
+                                mode="date"
+                                is24Hour={true}
+                                display="default"
+                                onChange={onChange}
+                            />
+                        </View>
+                        <DropDownPicker
+                            open={openPriority}
                             value={priority}
-                            placeholder="優先度"
+                            items={itemsForPriority}
+                            setOpen={setOpenPriority}
+                            setValue={setPriority}
+                            setItems={setItemsForPriority}
+                            zIndex={2000}
+                            zIndexInverse={1000}
                         />
                         <TextInput
                             style={styles.input}
@@ -107,8 +141,12 @@ const AddTaskFAB = () => {
                             placeholder="必要時間"
                             keyboardType="numeric"
                         />
+                        <Button
+                            onPress={handleAddTask}
+                            title="タスクを追加"
+                            color="#841584" />
                     </View>
-                </View>
+                </TouchableOpacity>
             )}
             <View style={styles.fabWrap}>
                 <TouchableOpacity activeOpacity={0.8} onPress={toggleFAB} style={styles.fab}>
@@ -130,8 +168,10 @@ const AddTaskFAB = () => {
 
 const styles = StyleSheet.create({
     input: {
+        width: '100%',
         height: 40,
-        margin: 12,
+        // margin: 12,
+        marginVertical: 8,
         borderWidth: 1,
         padding: 10,
     },
@@ -179,7 +219,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#6200ee',
     },
     fabIcon: {
-        // backgroundColor: '#764bda',
         width: 56,
         height: 56,
         justifyContent: 'center',

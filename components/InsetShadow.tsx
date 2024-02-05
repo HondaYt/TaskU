@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
         position: 'relative',
         height: '100%',
         width: '100%',
-        borderRadius: 10,
+        borderRadius: 16,
         overflow: 'hidden',
     },
     shadowBase: {
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
             width: 0,
             height: 0
         },
+        elevation: 5,
 
     },
 });

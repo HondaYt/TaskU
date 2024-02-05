@@ -78,16 +78,14 @@ const styles = StyleSheet.create({
     timer: {
         height: 72,
         width: '100%',
+
     },
     remaining: {
         overflow: 'hidden',
-        // position: 'absolute',
         height: '100%',
         justifyContent: 'center',
         alignItems: 'flex-end',
         backgroundColor: '#67DD73',
-        borderEndEndRadius: 16,
-        borderTopEndRadius: 16,
 
     },
     remainingText: {
@@ -97,41 +95,8 @@ const styles = StyleSheet.create({
     },
     content: {
         flex: 1,
-        borderRadius: 10,
     },
-    insetShadow: {
-        position: 'relative',
-        height: 60,
-        width: '100%',
-        borderRadius: 10,
-        overflow: 'hidden',
-    },
-    shadowBase: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: 'rgba(0,0,0,0.1)',
-        borderRadius: 16,
-    },
-    shadow: {
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        flex: 1,
-        margin: 6,
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        shadowColor: '#fff',
-        shadowOpacity: 1,
-        shadowRadius: 4,
-        shadowOffset: {
-            width: 0,
-            height: 0
-        },
-    },
+
+
 
 });

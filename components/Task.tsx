@@ -15,7 +15,6 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
-import Btn from 'components/Btn';
 
 
 import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateProvider';
@@ -32,8 +31,7 @@ type TaskProps = {
 export default function Task(props: TaskProps) {
     const { formatAndSaveDate, formattedDates } = useUserTimezoneDateFormatter();
     const { priority, deadline, task } = props; // Added deleteTask to props destructuring
-    const { tasks, deleteTask, fetchTasks, updateTaskStatus } = useTasks();
-
+    const { deleteTask, fetchTasks } = useTasks();
     useEffect(() => {
         if (deadline) { // deadline が undefined でないことを確認
             formatAndSaveDate(deadline.toISOString());
@@ -51,6 +49,7 @@ export default function Task(props: TaskProps) {
 
     let priorityColor;
     let priorityText;
+
     if (priority === 'high') {
         priorityColor = '#dc3333'; // 赤色
         priorityText = '高';
@@ -77,28 +76,22 @@ export default function Task(props: TaskProps) {
         >
             <View style={styles.currentTask}>
                 <View style={{ flexDirection: "row", alignItems: "flex-end", justifyContent: 'space-between' }}>
-                    <View style={{ flexDirection: 'row', gap: 8 }}>
-                        <View>
-                            <Text style={styles.genre}>{props.genre}</Text>
-                            <Text style={styles.title}>{props.title}</Text>
+                    <View style={{ gap: 4 }}>
+                        <Text style={styles.genre}>{props.genre}</Text>
+                        <Text style={styles.title}>{props.title}</Text>
+                        <View style={{ flexDirection: 'row', gap: 8 }}>
                             <View style={styles.TaskDetail}>
                                 <Text style={styles.DetailTtl}>優先度:</Text>
                                 <View style={[styles.taskPriorityWrap, { backgroundColor: priorityColor }]}>
                                     <Text style={styles.taskPriority}>{priorityText}</Text>
                                 </View>
                             </View>
-                        </View>
-                    </View>
-                </View>
-                <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'space-between' }}>
-                    <View style={{ flexDirection: 'row', width: 110 }}>
-                        <View>
                             <View style={styles.TaskDetail}><Text style={styles.DetailTtl}>所要時間:</Text><Text style={styles.taskDeadline}>{props.time_required}</Text><Text style={styles.DetailTtl}>分</Text></View>
                             <View style={styles.TaskDetail}><Text style={styles.DetailTtl}>期限:</Text><Text style={styles.taskDeadline}>{formattedDeadline}</Text></View>
                         </View>
                     </View>
-                    <Btn title="後に回す" textStyle={{ fontSize: 18 }} style={{ width: 90, backgroundColor: '#888' }} onPress={() => updateTaskStatus(task.id, 'pending')} />
                 </View>
+                {/* <Btn title="詳細" textStyle={{ fontSize: 18 }} style={{ width: 90, backgroundColor: '#888' }} onPress={() => { }} /> */}
             </View>
         </ContextMenu>
     );

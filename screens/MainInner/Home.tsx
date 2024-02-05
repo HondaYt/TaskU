@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { PropsWithChildren } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { supabase } from 'utils/supabase'
 
@@ -10,6 +11,7 @@ import { supabase } from 'utils/supabase'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import {
+    FlatList,
     Image,
     ScrollView,
     StatusBar,
@@ -17,7 +19,8 @@ import {
     Text,
     useColorScheme,
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    SectionList
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
 
@@ -30,76 +33,114 @@ import Btn from 'components/Btn'
 import CurrentTask from 'components/CurrentTask'
 import NextTask from 'components/NextTask'
 
-import FreeTimeImg from 'img/FreeTime.svg'
+import { useTasks } from 'components/TaskProvider';
 
+
+import CompletedToday from 'components/CompletedToday'
 
 export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
 
+    const { tasks, fetchTasks } = useTasks();
+
+    const renderItemSeparator = () => {
+        return <View style={{ height: 16 }} />;
+    };
+    useFocusEffect(
+        useCallback(() => {
+            fetchTasks();
+        }, [])
+    );
+
     const { userInfo, getAvatarUrl } = useUserInfo();
-
-
     const avatarUrl = getAvatarUrl();
 
 
     const currentDate = new Date();
     const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+    const sortedTasks = useMemo(() => {
+        if (!tasks) return []; // tasks が null の場合は空の配列を返す
+
+        return [...tasks]
+            .filter(task => task.status !== 'pending' && task.status !== 'completed')
+            .sort((a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime());
+    }, [tasks]);
+
+    const renderHeader = () => (
+        <View>
+            <View style={styles.homeHeader}>
+                <View style={styles.headerTextWrap}>
+                    <Text style={styles.headerText}>おはようございます</Text>
+                    <Text style={styles.headerText}>今日は<Text style={styles.date}>{currentDate.getFullYear()}.{currentDate.getMonth() + 1}.{currentDate.getDate()} {daysOfWeek[currentDate.getDay()]}曜日</Text></Text>
+                </View>
+                <View style={styles.userAvatar}>
+                    <Image
+                        source={{ uri: avatarUrl }}
+                        style={{ width: '100%', height: '100%' }}
+                    />
+                </View>
+            </View>
+            <Text style={styles.sectionTtl}>今日の残り時間</Text>
+            <Timer setIsTimerZero={setIsTimerZero} />
+            {sortedTasks.length === 0 ? <CompletedToday /> :
+
+                <>
+                    <Text style={styles.sectionTtl}>現在のタスク</Text>
+                    <FlatList
+                        contentContainerStyle={styles.container}
+                        data={sortedTasks}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item, index }) => {
+
+                            if (index === 0) {
+                                return (
+                                    <CurrentTask
+                                        task={item}
+                                        genre={item.genre}
+                                        title={item.title}
+                                        priority={item.priority}
+                                        deadline={new Date(item.deadline)}
+                                        time_required={item.time_required}
+                                    />
+                                )
+                            }
+
+                            return null;
+                        }}
+                    />
+                    <Text style={styles.sectionTtl}>今日のタスク</Text>
+                </>
+            }
+        </View>
+    );
 
     return (
+        <View style={styles.content}>
 
-        <View style={{ backgroundColor: '#fff' }}>
-            <ScrollView contentContainerStyle={styles.content}>
-                <View style={styles.homeHeader}>
-                    <View style={styles.headerTextWrap}>
-                        <Text style={styles.headerText}>おはようございます</Text>
-                        <Text style={styles.headerText}>今日は<Text style={styles.date}>{currentDate.getFullYear()}.{currentDate.getMonth() + 1}.{currentDate.getDate()} {daysOfWeek[currentDate.getDay()]}曜日</Text></Text>
-                    </View>
-                    <View style={styles.userAvatar}>
-                        <Image
-                            source={{ uri: avatarUrl }}
-                            style={{ width: '100%', height: '100%' }}
-                        />
-                    </View>
-                </View>
-                <Text style={styles.sectionTtl}>今日の残り時間</Text>
-                <Timer setIsTimerZero={setIsTimerZero} />
-                <View style={{ height: 450, justifyContent: 'center', alignItems: 'center', gap: 8 }}>
-                    <FreeTimeImg height={200} width={200} />
-                    <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold', lineHeight: 28, }}>今日予定されていた{"\n"}タスクは完了しました！</Text >
-                </View>
-                <View>
-                    <Text style={styles.sectionTtl}>現在のタスク</Text>
-                    <CurrentTask taskGenre='HTML' taskTtl='Work06' taskDeadline='2024.9.27' taskImportance='高' />
-                    <Text style={styles.sectionTtl}>今日のタスク</Text>
-                    <View style={{ gap: 16 }}>
-                        <NextTask
-                            taskGenre='PhotoShop'
-                            taskTtl='キャラクター紹介'
-                            taskDeadline='2024.10.06'
-                            taskImportance='中'
-                        />
-                        <NextTask
-                            taskGenre='Illustrator'
-                            taskTtl='カレンダー'
-                            taskDeadline='2024.10.02'
-                            taskImportance='低'
-                        />
-                        <NextTask
-                            taskGenre='Illustrator'
-                            taskTtl='カレンダー'
-                            taskDeadline='2024.10.02'
-                            taskImportance='低'
-                        />
-                        <NextTask
-                            taskGenre='家事'
-                            taskTtl='洗濯する'
-                            taskDeadline='2024.10.27'
-                            taskImportance='中'
-                        />
-                    </View>
-                </View>
-            </ScrollView>
-        </View >
+            <FlatList
+                contentContainerStyle={styles.container}
+                data={sortedTasks}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item, index }) => {
 
+                    if (index === 0) {
+                        return null;
+                    }
+
+                    return (
+                        <NextTask
+                            task={item}
+                            genre={item.genre}
+                            title={item.title}
+                            priority={item.priority}
+                            deadline={new Date(item.deadline)}
+                            time_required={item.time_required}
+                        />
+                    );
+                }}
+                ItemSeparatorComponent={renderItemSeparator}
+                ListHeaderComponent={renderHeader}
+            />
+        </View>
     );
 }
 const styles = StyleSheet.create({
@@ -115,12 +156,15 @@ const styles = StyleSheet.create({
 
     },
     content: {
+        flex: 1,
         // flexDirection: "row",
         // flexWrap: "wrap",
         backgroundColor: "#fff",
+    },
+    container: {
         padding: 16,
         paddingBottom: 90,
-        // flexGrow: 1,
+
     },
     homeHeader: {
         flexDirection: 'row',

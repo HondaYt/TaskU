@@ -1,57 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, Button } from 'react-native';
+import React, { useEffect, useCallback, useMemo } from 'react';
+import { StyleSheet, FlatList } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
-import { supabase } from 'utils/supabase';
-import { useUserInfo } from 'components/UserInfoProvider';
 import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateProvider';
 import { useTasks } from 'components/TaskProvider';
+import { View } from 'react-native';
+import Task from 'components/Task';
 
 export default function Tasks() {
-    const { formatAndSaveDate, formattedDates } = useUserTimezoneDateFormatter();
 
-    const { tasks, addTask, deleteTask, fetchTasks } = useTasks(); // useTasksフックを使用してタスク関連の機能を取得
 
-    useEffect(() => {
-        fetchTasks();
-    }, [fetchTasks, addTask, deleteTask]);
+    const { tasks, setTasks, fetchTasks } = useTasks();
 
+
+
+    const renderItemSeparator = () => {
+        return <View style={{ height: 16 }} />;
+    };
+    useFocusEffect(
+        useCallback(() => {
+            fetchTasks();
+        }, [])
+    );
+
+    const sortedTasks = useMemo(() => {
+        if (!tasks) return []; // tasks が null の場合は空の配列を返す
+
+        return [...tasks]
+            .filter(task => task.status !== 'completed')
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }, [tasks]);
 
     return (
-        // <View style={styles.container}>
-        <FlatList
-            data={tasks}
-            keyExtractor={(item) => item.id.toString()}
-            style={styles.container}
-            renderItem={({ item }) => (
-                <View style={styles.taskItem}>
-                    <Text style={styles.taskTitle}>{item.title}</Text>
-                    <Text>{`Created at: ${item.created_at instanceof Date ? item.created_at.toISOString() : item.created_at}`}</Text>
-                    <Button
-                        onPress={() => deleteTask(item.id)}
-                        title="削除"
-                        color="#ff0000"
+        <View style={styles.content}>
+            <FlatList
+                data={sortedTasks}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={styles.container}
+                renderItem={({ item }) => (
+                    <Task
+                        task={item}
+                        genre={item.genre}
+                        title={item.title}
+                        priority={item.priority}
+                        deadline={new Date(item.deadline)}
+                        time_required={item.time_required}
                     />
-                </View>
-            )
-            }
-        />
-        // </View>
+                )}
+                ItemSeparatorComponent={renderItemSeparator}
+            />
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
+    content: {
         flex: 1,
-        // padding: 24,
         backgroundColor: "#fff",
-        gap: 16,
     },
-    taskItem: {
-        padding: 20,
-        marginVertical: 8,
-        backgroundColor: "#f9c2ff",
-    },
-    taskTitle: {
-        fontSize: 18,
+    container: {
+        flexGrow: 1,
+        padding: 16,
+        paddingBottom: 90,
+        backgroundColor: "#fff",
     },
 });

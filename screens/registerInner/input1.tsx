@@ -1,4 +1,4 @@
-import React, { useId, useState, useEffect, useRef, } from 'react';
+import React, { useId, useState, useEffect, useRef, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -11,6 +11,7 @@ import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 import * as ImageManipulator from 'expo-image-manipulator';
 
+import { useFocusEffect } from '@react-navigation/native';
 
 import {
     ScrollView,
@@ -28,15 +29,20 @@ import {
 } from 'react-native';
 
 import { useUserInfo } from 'components/UserInfoProvider';
-
+import { useTasks } from 'components/TaskProvider';
 
 interface RegisterInput1Props {
     setIsButtonDisabled: (disabled: boolean) => void;
     userInfo: any;
     setUserInfo: (userInfo: any) => void;
 }
-
 export default function registerInput1() {
+    const { tasks, setTasks, fetchTasks } = useTasks();
+    useFocusEffect(
+        useCallback(() => {
+            fetchTasks();
+        }, [])
+    );
 
     const { userInfo, setUserInfo } = useUserInfo();
     const [userName, setUserName] = useState(userInfo?.username);
