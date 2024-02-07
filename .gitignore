@@ -68,8 +68,11 @@ yarn-error.log
 # yarn
 .yarn/
 
-utils/
+# utils/
 firebaseConfig.js
 
 **/dist/
 dist/
+
+ios/
+android/
