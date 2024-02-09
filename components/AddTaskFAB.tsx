@@ -172,6 +172,7 @@ const AddTaskFAB = () => {
                                 <View style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 }}>
                                     <TextInput
                                         style={{ flex: 1, height: 40 }}
+                                        placeholder="検索と追加"
                                         onChangeText={(text) => {
                                             setSearchText(text);
                                             onSearch(text);
