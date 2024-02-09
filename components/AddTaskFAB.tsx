@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Animated, TextInput, Button, Platform } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Animated, Button, Platform, Keyboard, ScrollView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Octicons } from '@expo/vector-icons';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Octicons, AntDesign } from '@expo/vector-icons';
+import { TextInput } from 'react-native-paper';
+import { useTasks } from 'components/TaskContext';
+import Btn from 'components/Btn';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import { getLocales } from 'expo-localization';
 
-import { useTasks } from 'components/TaskProvider';
+const locales = getLocales();
+const languageTag = locales[0].languageTag;
+
 
 const AddTaskFAB = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -31,6 +39,11 @@ const AddTaskFAB = () => {
         { label: '高', value: 'high' }
     ]);
 
+    useEffect(() => {
+        const newItemsForGenre = genres.map(genre => ({ label: genre, value: genre }));
+        setItemsForGenre(newItemsForGenre);
+    }, [genres]);
+
     const onChange = useCallback((event: any, selectedDate: any) => {
         const currentDate = selectedDate instanceof Date ? selectedDate : deadline;
         setShowDatePicker(Platform.OS === 'ios');
@@ -39,7 +52,6 @@ const AddTaskFAB = () => {
 
     const handleAddTask = useCallback(async () => {
         if (title.trim() !== '') {
-
             const deadlineDate = new Date(deadline);
             await addTask(title, genre, deadlineDate, status, priority, parseInt(time_required, 10));
             setTitle('');
@@ -49,7 +61,6 @@ const AddTaskFAB = () => {
             setPriority('medium');
             setTimeRequired('');
             setIsOpen(false);
-
         } else {
             alert('タイトルを入力してください');
         }
@@ -83,71 +94,141 @@ const AddTaskFAB = () => {
         outputRange: ['0deg', '135deg'],
     });
 
+    const [modalHeight, setModalHeight] = useState(); // モーダルの高さの状態を追加
+
+    useEffect(() => {
+        // const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+        //     setModalHeight(350); // キーボード表示時にモーダルの高さを60に設定
+        // });
+        // const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+        //     setModalHeight(380); // キーボード非表示時にモーダルの高さを元に戻す
+        // });
+
+        //     return () => {
+        //         keyboardDidShowListener.remove();
+        //         keyboardDidHideListener.remove();
+        //     };
+    }, []);
+
+
+    const [searchText, setSearchText] = useState('');
+    const [filteredData, setFilteredData] = useState(itemsForGenre);
+
+    useEffect(() => {
+        if (!searchText) {
+            setFilteredData(itemsForGenre);
+        } else {
+            const filtered = itemsForGenre.filter(item =>
+                item.label.toLowerCase().includes(searchText.toLowerCase())
+            );
+            setFilteredData(filtered);
+        }
+    }, [searchText]);
+
+    const handleAddGenre = () => {
+        const newGenre = { label: searchText, value: searchText };
+        setItemsForGenre(prevItems => [...prevItems, newGenre]);
+        setGenre(searchText);
+        setSearchText('');
+    };
+
     return (
         <TouchableOpacity activeOpacity={1} onPress={toggleFAB} style={[styles.container, isOpen ? styles.expandedContainer : null]}>
             {isOpen && (
                 <TouchableOpacity
-                    style={styles.modal}
+                    style={[styles.modal, { height: modalHeight }]}
                     activeOpacity={1}
                     onPress={() => { }}
                 >
-                    <View>
+                    <View style={{ gap: 8 }}>
                         <TextInput
-                            style={styles.input}
-                            onChangeText={setTitle}
+                            label="タスク名"
                             value={title}
-                            placeholder="タスクを入力"
+                            onChangeText={title => setTitle(title)}
+                            contentStyle={{ backgroundColor: '#fff' }}
+
                         />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setGenre}
-                            value={genre}
+                        <Dropdown
+                            style={styles.dropdown}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            iconStyle={styles.iconStyle}
+                            data={itemsForGenre}
+                            search
+                            labelField="label"
+                            valueField="value"
                             placeholder="ジャンル"
-                        />
-                        <DropDownPicker
-                            open={openGenre}
+                            searchPlaceholder="Search..."
                             value={genre}
-                            items={itemsForGenre}
-                            setOpen={setOpenGenre}
-                            setValue={setGenre}
-                            setItems={setItemsForGenre}
-                            zIndex={3000}
-                            zIndexInverse={1000}
+                            maxHeight={280}
+                            onChange={item => {
+                                setGenre(item.value);
+                            }}
+                            renderLeftIcon={() => (
+                                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+                            )}
+                            renderInputSearch={(onSearch) => (
+                                <View style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 }}>
+                                    <TextInput
+                                        style={{ flex: 1, height: 40 }}
+                                        onChangeText={(text) => {
+                                            setSearchText(text);
+                                            onSearch(text);
+                                        }}
+                                        value={searchText}
+                                        contentStyle={{ backgroundColor: '#fff' }}
+
+                                    />
+                                    <TouchableOpacity style={{ width: 60, height: 40, justifyContent: 'center', alignItems: 'center', backgroundColor: '#888', borderRadius: 8 }} onPress={handleAddGenre}>
+                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>追加</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                            )}
                         />
-                        <View>
-                            <DateTimePicker
-                                testID="dateTimePicker"
-                                value={deadline}
-                                mode="date"
-                                is24Hour={true}
-                                display="default"
-                                onChange={onChange}
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                                <Text>期限</Text>
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={deadline}
+                                    mode="date"
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={onChange}
+                                    locale={languageTag}
+                                />
+                            </View>
+                            <TextInput
+                                onChangeText={setTimeRequired}
+                                value={time_required}
+                                label="所要時間"
+                                keyboardType="numeric"
+                                contentStyle={{ backgroundColor: '#fff' }}
+                                style={{ flex: 1, }}
                             />
                         </View>
-                        <DropDownPicker
-                            open={openPriority}
+                        <Dropdown
+                            style={styles.dropdown}
+
+                            data={itemsForPriority}
+                            labelField="label"
+                            valueField="value"
+                            placeholder="優先度を選択"
                             value={priority}
-                            items={itemsForPriority}
-                            setOpen={setOpenPriority}
-                            setValue={setPriority}
-                            setItems={setItemsForPriority}
-                            zIndex={2000}
-                            zIndexInverse={1000}
+                            onChange={item => {
+                                setPriority(item.value);
+                            }}
                         />
-                        <TextInput
-                            style={styles.input}
-                            onChangeText={setTimeRequired}
-                            value={time_required}
-                            placeholder="必要時間"
-                            keyboardType="numeric"
-                        />
+
                         <Button
                             onPress={handleAddTask}
                             title="タスクを追加"
                             color="#841584" />
                     </View>
                 </TouchableOpacity>
-            )}
+            )
+            }
             <View style={styles.fabWrap}>
                 <TouchableOpacity activeOpacity={0.8} onPress={toggleFAB} style={styles.fab}>
                     <Animated.View style={[styles.fabIcon, {
@@ -162,11 +243,31 @@ const AddTaskFAB = () => {
                     </Animated.View>
                 </TouchableOpacity>
             </View>
-        </TouchableOpacity>
+        </TouchableOpacity >
     );
 };
 
 const styles = StyleSheet.create({
+    dropdown: {
+        height: 50,
+        borderColor: 'gray',
+        borderWidth: 0.5,
+        borderRadius: 8,
+        paddingHorizontal: 8,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    placeholderStyle: {
+        fontSize: 16,
+    },
+    selectedTextStyle: {
+        fontSize: 16,
+    },
+    iconStyle: {
+        width: 20,
+        height: 20,
+    },
     input: {
         width: '100%',
         height: 40,

@@ -24,7 +24,7 @@ import {
 } from 'react-native';
 import { Octicons } from '@expo/vector-icons';
 
-import { useUserInfo } from 'components/UserInfoProvider';
+import { useUserInfo } from 'components/UserInfoContext';
 
 import Welcome from 'screens/Welcome'
 import Register from 'screens/Register'
@@ -33,7 +33,7 @@ import Btn from 'components/Btn'
 import CurrentTask from 'components/CurrentTask'
 import NextTask from 'components/NextTask'
 
-import { useTasks } from 'components/TaskProvider';
+import { useTasks } from 'components/TaskContext';
 
 
 import CompletedToday from 'components/CompletedToday'
@@ -59,17 +59,29 @@ export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: bool
     const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
     const sortedTasks = useMemo(() => {
         if (!tasks) return []; // tasks が null の場合は空の配列を返す
-
         return [...tasks]
             .filter(task => task.status !== 'pending' && task.status !== 'completed')
             .sort((a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime());
     }, [tasks]);
 
+    const getGreeting = () => {
+        const hour = new Date().getHours(); // 現在の時間（時）を取得
+        if (hour < 12) {
+            return 'おはようございます';
+        } else if (hour < 17) {
+            return 'おつかれさまです';
+        } else {
+            return 'こんばんは';
+        }
+    };
+
+    const greeting = getGreeting(); // 挨拶のテキストを取得
+
     const renderHeader = () => (
         <View>
             <View style={styles.homeHeader}>
                 <View style={styles.headerTextWrap}>
-                    <Text style={styles.headerText}>おはようございます</Text>
+                    <Text style={styles.headerText}>{greeting}</Text>
                     <Text style={styles.headerText}>今日は<Text style={styles.date}>{currentDate.getFullYear()}.{currentDate.getMonth() + 1}.{currentDate.getDate()} {daysOfWeek[currentDate.getDay()]}曜日</Text></Text>
                 </View>
                 <View style={styles.userAvatar}>

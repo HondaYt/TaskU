@@ -2,8 +2,8 @@ import React, { useEffect, useCallback, useMemo } from 'react';
 import { StyleSheet, FlatList } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateProvider';
-import { useTasks } from 'components/TaskProvider';
+import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateContext';
+import { useTasks } from 'components/TaskContext';
 import { View } from 'react-native';
 import Task from 'components/Task';
 

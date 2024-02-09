@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { PropsWithChildren } from 'react';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import ContextMenu from "react-native-context-menu-view";
-import { useTasks } from 'components/TaskProvider';
+import { useTasks } from 'components/TaskContext';
 import {
     ScrollView,
     StatusBar,
@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 
 
-import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateProvider';
+import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateContext';
 
 type TaskProps = {
     genre: string;

@@ -19,7 +19,7 @@ const Tab = createBottomTabNavigator();
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
-import { useTasks } from 'components/TaskProvider';
+import { useTasks } from 'components/TaskContext';
 
 import AddTaskFAB from 'components/AddTaskFAB'
 import BedtimeImg from 'img/BedTime.svg'
@@ -28,7 +28,50 @@ import BedtimeImg from 'img/BedTime.svg'
 
 export default function Main() {
 
-    const { tasks, fetchTasks } = useTasks();
+    const { tasks, fetchTasks, addTask } = useTasks();
+    const [title, setTitle] = useState('');
+
+    const [genre, setGenre] = useState('');
+    const [status, setStatus] = useState('');
+    const [time_required, setTimeRequired] = useState('');
+    const [deadline, setDeadline] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [priority, setPriority] = useState('medium');
+
+    useEffect(() => {
+        const addSentakuTaskIfNotExists = async () => {
+            const defaultTitle = '洗濯';
+            const defaultGenre = '家事';
+            const defaultDeadline = new Date();
+            const defaultStatus = '';
+            const defaultPriority = 'high';
+            const defaultTimeRequired = 60;
+
+            const taskExists = tasks?.some(task => task.title === defaultTitle && task.status === defaultStatus);
+
+            if (!taskExists) {
+                await addTask(defaultTitle, defaultGenre, defaultDeadline, defaultStatus, defaultPriority, defaultTimeRequired);
+            }
+        };
+        const addSouziTaskIfNotExists = async () => {
+            const defaultTitle = '掃除';
+            const defaultGenre = '家事';
+            const defaultDeadline = new Date();
+            const defaultStatus = '';
+            const defaultPriority = 'high';
+            const defaultTimeRequired = 60;
+
+            const taskExists = tasks?.some(task => task.title === defaultTitle && task.status === defaultStatus);
+
+            if (!taskExists) {
+                await addTask(defaultTitle, defaultGenre, defaultDeadline, defaultStatus, defaultPriority, defaultTimeRequired);
+            }
+        };
+
+        addSentakuTaskIfNotExists();
+        addSouziTaskIfNotExists();
+    }, []);
+
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const [isTimerZero, setIsTimerZero] = useState(false);

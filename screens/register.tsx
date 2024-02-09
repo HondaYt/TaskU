@@ -30,7 +30,7 @@ export default function Register({ navigation }: any) {
     const progressTexts = [
         `プロフィールを更新しましょう。`,
         `次に、あなたのことを${"\n"}教えてください！`,
-        `最後に、授業が終わる時間を${"\n"}教えてください！`,
+        `あなたに最適な${"\n"}テンプレートはこちらです。`,
         "登録が完了しました。"
     ];
     const [progressText, setProgressText] = useState(progressTexts[0]);

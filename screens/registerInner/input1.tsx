@@ -28,8 +28,8 @@ import {
     Alert
 } from 'react-native';
 
-import { useUserInfo } from 'components/UserInfoProvider';
-import { useTasks } from 'components/TaskProvider';
+import { useUserInfo } from 'components/UserInfoContext';
+import { useTasks } from 'components/TaskContext';
 
 interface RegisterInput1Props {
     setIsButtonDisabled: (disabled: boolean) => void;

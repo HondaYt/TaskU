@@ -1,4 +1,5 @@
 import React from 'react'
+import { TouchableOpacity, StyleSheet, Text, View } from 'react-native'
 import {
     GoogleSignin,
     GoogleSigninButton,
@@ -6,7 +7,10 @@ import {
 } from '@react-native-google-signin/google-signin'
 import { supabase } from 'utils/supabase'
 
-import { useUserInfo } from 'components/UserInfoProvider';
+import { FontAwesome6 } from '@expo/vector-icons';
+
+import { useUserInfo } from 'components/UserInfoContext';
+import GoogleLogo from 'img/googleLogo.svg';
 
 export default function Auth({ navigation }: any) {
 
@@ -18,9 +22,9 @@ export default function Auth({ navigation }: any) {
     })
 
     return (
-        <GoogleSigninButton
-            size={GoogleSigninButton.Size.Wide}
-            color={GoogleSigninButton.Color.Dark}
+        <TouchableOpacity
+            style={styles.googleButton}
+            activeOpacity={0.8}
             onPress={async () => {
                 try {
                     await GoogleSignin.hasPlayServices()
@@ -59,6 +63,28 @@ export default function Auth({ navigation }: any) {
                     }
                 }
             }}
-        />
+        >
+            <View style={{ width: 60, height: 60, justifyContent: 'center', alignItems: 'center' }}><GoogleLogo height={30} width={30} /></View>
+            <View style={{ flex: 1, height: 60, justifyContent: 'center', alignItems: 'center', }}><Text style={{ fontSize: 16, fontWeight: '500', color: '#333' }}>Googleでログイン</Text></View>
+        </TouchableOpacity >
     )
 }
+
+const styles = StyleSheet.create({
+    googleButton: {
+        width: '100%',
+        height: 60,
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.2,
+        elevation: 6,
+    },
+});

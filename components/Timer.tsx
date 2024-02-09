@@ -1,5 +1,4 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -18,44 +17,20 @@ import {
 } from 'react-native';
 
 
+
 import Welcome from 'screens/Welcome'
 import Register from 'screens/Register'
 import InsetShadow from 'components/InsetShadow'
+// import useTimer from 'components/useTimer';
+import { useTimer } from './TimerContext';
 export default function Timer({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
 
-    const initialTime = 0.005 * 60 * 60; // 初期値は0.1時間（秒単位）
-    const [time, setTime] = useState<number>(initialTime);
-    const [width, setWidth] = useState<number>(100); // 初期値は100
-
-    useEffect(() => {
-        const timerId = setInterval(() => {
-            setTime(prevTime => {
-                if (prevTime <= 1) {
-                    clearInterval(timerId); // 残り時間が0になったらタイマーを停止
-                    setTimeout(() => {
-                        setIsTimerZero(true); // 残り時間が0になったら、setIsTimerZeroを呼び出す
-                        setWidth(0);
-                    }, 0);
-                    return 0;
-                }
-                const newTime = prevTime - 1;
-                const newWidth = (newTime / initialTime) * 100; // 残り時間に応じてwidthを計算
-                setWidth(newWidth);
-                return newTime;
-            });
-        }, 1000); // 1秒ごとに時間を減らす
-
-        return () => {
-            clearInterval(timerId); // コンポーネントがアンマウントされるときにタイマーをクリア
-        };
-    }, []);
+    const { time, width } = useTimer();
 
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);
-    const seconds = time % 60;
-
+    const seconds = Math.floor(time % 60);
     const formatTime = (time: number) => time < 10 ? `0${time}` : `${time}`;
-
     const remaining = `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
 
     return (

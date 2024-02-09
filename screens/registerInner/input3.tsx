@@ -2,14 +2,17 @@ import React from 'react';
 import { useState, useRef, useCallback } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useTimer } from 'components/TimerContext';
 import {
     ScrollView,
     StyleSheet,
     Text,
     View,
     Dimensions,
+    Platform,
+    Button
 } from 'react-native';
 
 import Btn from 'components/Btn'
@@ -20,13 +23,14 @@ const { width } = Dimensions.get('window');
 // ボタンの幅（または高さ）を計算
 const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
 
-interface RegisterInput2Props {
+interface RegisterInput3Props {
     setIsButtonDisabled: (disabled: boolean) => void;
 }
 
-export default function registerInput2({ setIsButtonDisabled }: RegisterInput2Props) {
+export default function registerInput3({ setIsButtonDisabled }: RegisterInput3Props) {
+    const { setStartHour, setStartMinute, setEndHour, setEndMinute } = useTimer();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const [tasks, setTasks] = useState([{ name: '洗濯', count: 3 }, { name: '掃除', count: 1 }]);
+    const [tasks, setTasks] = useState([{ name: '洗濯', count: 2 }, { name: '掃除', count: 1 }]);
     const [activeTaskIndex, setActiveTaskIndex] = useState<number | null>(null);
 
     const handlePresentModalPress = useCallback((index: number) => {
@@ -42,6 +46,30 @@ export default function registerInput2({ setIsButtonDisabled }: RegisterInput2Pr
         setTasks(prevTasks => prevTasks.map((task, i) => i === activeTaskIndex ? { ...task, count: task.count > 0 ? task.count - 1 : 0 } : task));
     };
 
+    const initialStartTime = new Date();
+    initialStartTime.setHours(17, 0, 0, 0);
+    const [startTime, setStartTime] = useState(initialStartTime);
+
+    // 初期値を午後10時00分に設定
+    const initialEndTime = new Date();
+    initialEndTime.setHours(23, 0, 0, 0);
+    const [endTime, setEndTime] = useState(initialEndTime);
+
+    const onStartTimeChange = (event: any, selectedDate: any) => {
+        if (selectedDate) {
+            setStartTime(selectedDate);
+            setStartHour(selectedDate.getHours());
+            setStartMinute(selectedDate.getMinutes());
+        }
+    };
+
+    const onEndTimeChange = (event: any, selectedDate: any) => {
+        if (selectedDate) {
+            setEndTime(selectedDate);
+            setEndHour(selectedDate.getHours());
+            setEndMinute(selectedDate.getMinutes());
+        }
+    };
     return (
         <>
             <GestureHandlerRootView style={{ flex: 1 }}>
@@ -50,6 +78,31 @@ export default function registerInput2({ setIsButtonDisabled }: RegisterInput2Pr
                         {tasks.map((task, index) => (
                             <TempChild key={index} count={task.count} todo={task.name} onEditPress={() => handlePresentModalPress(index)} />
                         ))}
+                        <View style={{ flexDirection: "row", justifyContent: "center", gap: 8, alignItems: "center" }}>
+                            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                                <Text>開始時間</Text>
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={startTime}
+                                    mode="time"
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={onStartTimeChange}
+                                />
+                            </View>
+                            <Text>〜</Text>
+                            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                                <Text>就寝時間</Text>
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={endTime}
+                                    mode="time"
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={onEndTimeChange}
+                                />
+                            </View>
+                        </View>
                     </ScrollView>
                     <BottomSheetModal
                         detached={true}

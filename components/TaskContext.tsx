@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from 'utils/supabase';
-import { useUserInfo } from 'components/UserInfoProvider';
-import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateProvider';
+import { useUserInfo } from 'components/UserInfoContext';
+import { useUserTimezoneDateFormatter } from 'components/UserTimezoneDateContext';
 
 
 // コンテキストの作成
@@ -92,6 +92,8 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
         if (genresData) {
             setGenres(genresData.map(g => g.genre).filter((x, i, self) => self.indexOf(x) === i));
         }
+        console.log("fetchGenres");
+
     };
 
     const addTask = async (title: string, genre: string, deadline: Date, status: string, priority: string, time_required: number) => {
@@ -111,6 +113,7 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
             console.error('タスクの追加中にエラーが発生しました:', error);
         }
         fetchTasks();
+        fetchGenres();
     };
 
     const deleteTask = async (taskId: number) => {
