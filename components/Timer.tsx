@@ -23,7 +23,7 @@ import Register from 'screens/Register'
 import InsetShadow from 'components/InsetShadow'
 // import useTimer from 'components/useTimer';
 import { useTimer } from './TimerContext';
-export default function Timer({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
+export default function Timer() {
 
     const { time, width } = useTimer();
 

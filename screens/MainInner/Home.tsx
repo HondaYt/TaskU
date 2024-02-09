@@ -38,7 +38,7 @@ import { useTasks } from 'components/TaskContext';
 
 import CompletedToday from 'components/CompletedToday'
 
-export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: boolean) => void }) {
+export default function Home() {
 
     const { tasks, fetchTasks } = useTasks();
 
@@ -53,7 +53,12 @@ export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: bool
 
     const { userInfo, getAvatarUrl } = useUserInfo();
     const avatarUrl = getAvatarUrl();
-
+    const priorityToNumber = (priority: string) => {
+        if (priority === 'high') return 1;
+        if (priority === 'medium') return 2;
+        if (priority === 'low') return 3;
+        return 4; // 不明な優先度は最後に
+    };
 
     const currentDate = new Date();
     const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
@@ -61,7 +66,11 @@ export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: bool
         if (!tasks) return []; // tasks が null の場合は空の配列を返す
         return [...tasks]
             .filter(task => task.status !== 'pending' && task.status !== 'completed')
-            .sort((a, b) => new Date(b.deadline).getTime() - new Date(a.deadline).getTime());
+            .sort((a, b) => {
+                const deadlineDiff = new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+                if (deadlineDiff !== 0) return deadlineDiff;
+                return priorityToNumber(a.priority) - priorityToNumber(b.priority);
+            });
     }, [tasks]);
 
     const getGreeting = () => {
@@ -92,7 +101,7 @@ export default function Home({ setIsTimerZero }: { setIsTimerZero: (isZero: bool
                 </View>
             </View>
             <Text style={styles.sectionTtl}>今日の残り時間</Text>
-            <Timer setIsTimerZero={setIsTimerZero} />
+            <Timer />
             {sortedTasks.length === 0 ? <CompletedToday /> :
 
                 <>

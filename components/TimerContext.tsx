@@ -4,6 +4,7 @@ const TimerContext = createContext<TimerContextType>({
     time: 0,
     width: 0,
     setIsTimerZero: () => { },
+    isTimerZero: false,
     startHour: 0,
     startMinute: 0,
     endHour: 0,
@@ -18,6 +19,7 @@ interface TimerContextType {
     time: number;
     width: number;
     setIsTimerZero: (isZero: boolean) => void;
+    isTimerZero: boolean;
     startHour: number;
     startMinute: number;
     endHour: number;
@@ -47,6 +49,9 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
 
 
     useEffect(() => {
+        setIsTimerZero(false);
+        let intervalId: any = null;
+        let timeoutId: any = null;
 
         const calculateTimeLeft = (start: Date, end: Date) => {
             const now = new Date();
@@ -69,25 +74,34 @@ export const TimerProvider = ({ children }: { children: ReactNode }) => {
         setTime(initialTime);
         setWidth((initialTime / ((endTime.getTime() - startTime.getTime()) / 1000)) * 100);
 
-        const timeout = setTimeout(() => {
-            const interval = setInterval(() => {
+        // setTimeoutを使用して、startTimeまで待機する
+        timeoutId = setTimeout(() => {
+            // setIntervalを使用して、定期的に時間を更新する
+            intervalId = setInterval(() => {
                 const timeLeft = calculateTimeLeft(startTime, endTime);
                 setTime(timeLeft);
                 setWidth((timeLeft / ((endTime.getTime() - startTime.getTime()) / 1000)) * 100);
                 if (timeLeft <= 0) {
-                    clearInterval(interval);
+                    clearInterval(intervalId);
                     setIsTimerZero(true);
                 }
             }, 1000);
-            return () => clearInterval(interval);
         }, now < startTime ? startTime.getTime() - now.getTime() : 0);
 
-        return () => clearTimeout(timeout);
+        // コンポーネントのアンマウント時、または依存配列の値が変更された際にタイマーをクリアする
+        return () => {
+            if (intervalId !== null) {
+                clearInterval(intervalId);
+            }
+            if (timeoutId !== null) {
+                clearTimeout(timeoutId);
+            }
+        };
     }, [startHour, startMinute, endHour, endMinute]);
 
     return (
         <TimerContext.Provider value={{
-            time, width, setIsTimerZero,
+            time, width, setIsTimerZero, isTimerZero,
             startHour, startMinute, endHour, endMinute,
             setStartHour, setStartMinute, setEndHour, setEndMinute
         }}>

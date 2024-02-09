@@ -11,10 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
+      "icon": "./assets/icon.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.hondayt.TaskU",
       "infoPlist": {
@@ -36,16 +35,13 @@
       "package": "com.hondayt.TaskU"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     },
     "extra": {
       "eas": {
         "projectId": "82b07cb9-e83a-4ac4-9700-2e17be720154"
       }
     },
-    "plugins": [
-      "expo-localization",
-      "expo-router"
-    ]
+    "plugins": ["expo-localization", "expo-router"]
   }
 }

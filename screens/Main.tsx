@@ -20,13 +20,15 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetModal, BottomSheetModalProvider, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 import { useTasks } from 'components/TaskContext';
-
+import { useTimer } from 'components/TimerContext';
 import AddTaskFAB from 'components/AddTaskFAB'
 import BedtimeImg from 'img/BedTime.svg'
 
 
 
 export default function Main() {
+    const { isTimerZero, setIsTimerZero } = useTimer();
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
     const { tasks, fetchTasks, addTask } = useTasks();
     const [title, setTitle] = useState('');
@@ -73,8 +75,7 @@ export default function Main() {
     }, []);
 
 
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    const [isTimerZero, setIsTimerZero] = useState(false);
+    // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
     useEffect(() => {
         if (isTimerZero) {
@@ -103,8 +104,8 @@ export default function Main() {
                     >
                         <Tab.Screen
                             name="Home"
-                            // component={Home}
-                            children={() => <Home setIsTimerZero={setIsTimerZero} />}
+                            component={Home}
+                            // children={() => <Home />}
                             // iconを追加
                             options={{
                                 tabBarLabel: 'ホーム', tabBarIcon: ({ color }) => (

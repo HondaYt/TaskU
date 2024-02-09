@@ -165,7 +165,8 @@ const AddTaskFAB = () => {
                                 setGenre(item.value);
                             }}
                             renderLeftIcon={() => (
-                                <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+                                // <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+                                <Octicons name="duplicate" size={20} color="#333" style={{ marginHorizontal: 8 }} />
                             )}
                             renderInputSearch={(onSearch) => (
                                 <View style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 }}>
