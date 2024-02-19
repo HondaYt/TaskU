@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import FreeTimeImg from 'img/FreeTime.svg'
+import FreeTimeImg from 'assets/FreeTime.svg'
 
 
 

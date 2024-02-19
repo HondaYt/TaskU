@@ -124,9 +124,9 @@ export default function registerInput1() {
                 .eq('id', userId);
 
             if (error) {
-                console.error('Error updating user info:', error);
+                console.error('Error updating user info');
             } else {
-                console.log('User info updated:', data);
+                console.log('User info updated successfully!');
             }
 
             const { data: updatedUserInfo, error: fetchError } = await supabase

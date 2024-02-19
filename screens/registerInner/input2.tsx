@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, ElementType, ReactNode } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -14,6 +14,11 @@ import {
 } from 'react-native';
 
 import AttributeBtn from 'components/AttributeBtn'
+import LivingAloneImg from 'assets/LivingAlone.svg'
+import FamilyImg from 'assets/Family.svg'
+import StudentImg from 'assets/Student.svg'
+import WorkerImg from 'assets/Worker.svg'
+import HousewifeImg from 'assets/Housewife.svg'
 
 const { width } = Dimensions.get('window');
 // ボタンの幅（または高さ）を計算
@@ -34,8 +39,20 @@ export default function registerInput1({ setIsButtonDisabled }: RegisterInput1Pr
     // 属性とそのカテゴリのマッピング
     const attributes = {
         'living': ['一人暮らし', '同居中'],
-        'status': selectedAttributes['living'] ? ['学生', '社会人', '主婦'] : [],
+        'status': selectedAttributes['living'] ? ['学生', '社会人', '主婦・主夫'] : [],
         // 他のカテゴリと属性を追加
+    };
+    const createIconComponent = (IconComponent: ElementType) => {
+        return <IconComponent height={buttonSize / 1.6} width={buttonSize / 1} />;
+    };
+
+    const attributeIcons: { [key: string]: ReactNode } = {
+        '一人暮らし': createIconComponent(LivingAloneImg),
+        '同居中': createIconComponent(FamilyImg),
+        '学生': createIconComponent(StudentImg),
+        '社会人': createIconComponent(WorkerImg),
+        '主婦・主夫': createIconComponent(HousewifeImg),
+        // 他の属性に対するアイコンも同様に追加
     };
 
     const handleAttributePress = (category: string, attribute: string) => {
@@ -94,6 +111,7 @@ export default function registerInput1({ setIsButtonDisabled }: RegisterInput1Pr
                                 <AttributeBtn
                                     key={attribute}
                                     title={attribute}
+                                    icon={attributeIcons[attribute]}
                                     onPress={() => handleAttributePress(category, attribute)}
                                     selected={selectedAttributes[category] === attribute}
                                 />

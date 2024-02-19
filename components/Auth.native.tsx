@@ -10,7 +10,7 @@ import { supabase } from 'utils/supabase'
 import { FontAwesome6 } from '@expo/vector-icons';
 
 import { useUserInfo } from 'components/UserInfoContext';
-import GoogleLogo from 'img/googleLogo.svg';
+import GoogleLogo from 'assets/googleLogo.svg';
 
 export default function Auth({ navigation }: any) {
 

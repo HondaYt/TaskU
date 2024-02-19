@@ -22,7 +22,7 @@ import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typesc
 import { useTasks } from 'components/TaskContext';
 import { useTimer } from 'components/TimerContext';
 import AddTaskFAB from 'components/AddTaskFAB'
-import BedtimeImg from 'img/BedTime.svg'
+import BedtimeImg from 'assets/BedTime.svg'
 
 
 
