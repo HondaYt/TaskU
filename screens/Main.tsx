@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, Animated } from "react-native";
 import { SvgUri, SvgXml } from 'react-native-svg';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
@@ -40,6 +41,12 @@ export default function Main() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [priority, setPriority] = useState('medium');
 
+    useFocusEffect(
+        useCallback(() => {
+            fetchTasks();
+            console.log(tasks);
+        }, [])
+    );
     useEffect(() => {
         const addSentakuTaskIfNotExists = async () => {
             const defaultTitle = '洗濯';
@@ -142,7 +149,7 @@ export default function Main() {
                     style={{ alignItems: 'center', justifyContent: 'center', }}
                 >
                     <View>
-                        <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>就寝時間になりました。</Text>
+                        <Text style={{ textAlign: 'center', fontSize: 20, fontWeight: 'bold' }}>終了時間になりました。</Text>
                         <BedtimeImg width={200} height={200} />
                     </View>
                 </BottomSheetModal>

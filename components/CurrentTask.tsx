@@ -69,16 +69,19 @@ export default function Task(props: TaskProps) {
         <View style={styles.currentTask}>
             <View style={{ flexDirection: "row", alignItems: "flex-end", justifyContent: 'space-between' }}>
                 <View>
-                    <Text style={styles.taskGenre}>{props.genre}</Text>
+                    <View style={{ flexDirection: "row", gap: 8 }}>
+                        <Text style={styles.taskGenre}>{props.genre}</Text>
+                        <View style={[styles.TaskDetail]}>
+                            <Text style={styles.DetailTtl}>優先度:</Text>
+                            <View style={[styles.taskPriorityWrap, { backgroundColor: priorityColor }]}>
+                                <Text style={styles.taskPriority}>{priorityText}</Text>
+                            </View>
+                        </View>
+                    </View>
                     <Text style={styles.taskTtl}>{props.title}</Text>
                 </View>
                 <View>
-                    <View style={[styles.TaskDetail]}>
-                        <Text style={styles.DetailTtl}>優先度:</Text>
-                        <View style={[styles.taskPriorityWrap, { backgroundColor: priorityColor }]}>
-                            <Text style={styles.taskPriority}>{priorityText}</Text>
-                        </View>
-                    </View>
+                    <View style={styles.TaskDetail}><Text style={styles.DetailTtl}>所要時間:</Text><Text style={styles.taskDeadline}>{props.time_required}</Text><Text style={styles.DetailTtl}>分</Text></View>
                     <View style={styles.TaskDetail}><Text style={styles.DetailTtl}>期限:</Text><Text style={styles.taskDeadline}>{formattedDeadline}</Text></View>
                 </View>
             </View>

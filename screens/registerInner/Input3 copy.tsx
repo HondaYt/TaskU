@@ -10,7 +10,6 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableOpacity,
     Dimensions,
     Platform,
     Button
@@ -24,8 +23,6 @@ const { width } = Dimensions.get('window');
 // ボタンの幅（または高さ）を計算
 const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
 
-const dayOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
-
 interface RegisterInput3Props {
     setIsButtonDisabled: (disabled: boolean) => void;
     livingCategory: string;
@@ -33,63 +30,35 @@ interface RegisterInput3Props {
 }
 
 export default function registerInput3({ setIsButtonDisabled, livingCategory, statusCategory }: RegisterInput3Props) {
-    const toggleDaySelection = (day: string) => {
-        setLivingTasks(currentTasks => currentTasks.map((task, index) => {
-            if (index === activeTaskIndex) {
-                const isDaySelected = task.days.includes(day);
-                let newDays = isDaySelected ? task.days.filter(d => d !== day) : [...task.days, day];
-                // 曜日を正しい順序でソート
-                const dayOrder = dayOfWeek;
-                newDays = newDays.sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
-                return {
-                    ...task,
-                    days: newDays,
-                };
-            }
-            return task;
-        }));
-    };
     const { setStartHour, setStartMinute, setEndHour, setEndMinute } = useTimer();
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const initialTasks = useMemo(() => {
         if (livingCategory === '一人暮らし') {
-            if (statusCategory === '学生') {
-                return [{ name: '洗濯', days: ['月', '水', '土'] },
-                { name: '掃除', days: ['日'] }];
-            }
-            else if (statusCategory === '社会人') {
-                return [{ name: '洗濯', days: ['水', '土'] },
-                { name: '掃除', days: ['日', '木'] }];
+            if (statusCategory === '社会人') {
+                return [{ name: '洗濯', count: 3 }, { name: '掃除', count: 2 }];
             }
             else if (statusCategory === '主婦・主夫') {
-                return [{ name: '洗濯', days: ['土', '月', '水', '金'] },
-                { name: '掃除', days: ['日', '火', '木'] }];
+                return [{ name: '洗濯', count: 3 }, { name: '掃除', count: 2 }];
             }
-            return [{ name: '洗濯', days: ['月', '水', '土'] },
-            { name: '掃除', days: ['日', '木'] }];
+            return [{ name: '洗濯', count: 2 }, { name: '掃除', count: 1 }];
         }
 
         else if (livingCategory === '同居中') {
             if (statusCategory === '学生') {
-                return [{ name: '洗濯', days: [] },
-                { name: '掃除', days: [] }];
+                return [{ name: '洗濯', count: 0 }, { name: '掃除', count: 0 }];
             }
             else if (statusCategory === '社会人') {
-                return [{ name: '洗濯', days: ['土', '水'] },
-                { name: '掃除', days: ['日', '木'] }];
+                return [{ name: '洗濯', count: 2 }, { name: '掃除', count: 1 }];
             }
             else if (statusCategory === '主婦・主夫') {
-                return [{ name: '洗濯', days: ['土', '月', '水', '金'] },
-                { name: '掃除', days: ['日', '火', '木'] }];
+                return [{ name: '洗濯', count: 4 }, { name: '掃除', count: 3 }];
             }
-            return [{ name: '洗濯', days: ['土', '月', '水'] },
-            { name: '掃除', days: ['日', '木'] }];
+            return [{ name: '洗濯', count: 3 }, { name: '掃除', count: 2 }];
         }
-        return [{ name: '洗濯', days: [] },
-        { name: '掃除', days: [] }];
+        return [{ name: '洗濯', count: 0 }, { name: '掃除', count: 0 }];
     }, [livingCategory, statusCategory]);
 
-    const [livingTasks, setLivingTasks] = useState(initialTasks);
+    const [tasks, setTasks] = useState(initialTasks);
 
 
 
@@ -100,6 +69,13 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
         bottomSheetModalRef.current?.present();
     }, []);
 
+    const incrementCount = () => {
+        setTasks(prevTasks => prevTasks.map((task, i) => i === activeTaskIndex ? { ...task, count: task.count + 1 } : task));
+    };
+
+    const decrementCount = () => {
+        setTasks(prevTasks => prevTasks.map((task, i) => i === activeTaskIndex ? { ...task, count: task.count > 0 ? task.count - 1 : 0 } : task));
+    };
 
     const initialStartTime = new Date();
     initialStartTime.setHours(17, 0, 0, 0);
@@ -138,11 +114,9 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <BottomSheetModalProvider>
                     <ScrollView contentContainerStyle={styles.content}>
-                        <View style={styles.wrap}>
-                            {livingTasks.map((task, index) => (
-                                <TempChild key={index} days={task.days} todo={task.name} onEditPress={() => handlePresentModalPress(index)} />
-                            ))}
-                        </View>
+                        {tasks.map((task, index) => (
+                            <TempChild key={index} count={task.count} todo={task.name} onEditPress={() => handlePresentModalPress(index)} />
+                        ))}
                         <View style={{ flexDirection: "row", justifyContent: "center", gap: 8, alignItems: "center" }}>
                             <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                                 <Text>開始時間</Text>
@@ -153,7 +127,6 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
                                     is24Hour={true}
                                     display="default"
                                     onChange={onStartTimeChange}
-                                    themeVariant="light"
                                 />
                             </View>
                             <Text>〜</Text>
@@ -166,7 +139,6 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
                                     is24Hour={true}
                                     display="default"
                                     onChange={onEndTimeChange}
-                                    themeVariant="light"
                                 />
                             </View>
                         </View>
@@ -192,30 +164,20 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
                     >
                         <View style={styles.modalContainer}>
                             {activeTaskIndex !== null && (
-                                <View style={styles.modalContainer}>
-                                    {activeTaskIndex !== null && (
-                                        <>
-                                            {dayOfWeek.map((day) => (
-                                                <TouchableOpacity
-                                                    key={day}
-                                                    activeOpacity={0.8}
-                                                    style={[
-                                                        styles.dayButton,
-                                                        livingTasks[activeTaskIndex].days.includes(day) && styles.selectedDayButton
-                                                    ]}
-                                                    onPress={() => toggleDaySelection(day)}
-                                                >
-                                                    <Text style={[
-                                                        styles.dayButtonText,
-                                                        livingTasks[activeTaskIndex].days.includes(day) && styles.selectedDayButtonText
-                                                    ]}>
-                                                        {day}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </>
-                                    )}
-                                </View>
+                                <>
+                                    <Btn
+                                        title='-'
+                                        prev
+                                        style={{ width: 60, height: 60 }}
+                                        onPress={decrementCount}
+                                    />
+                                    <View style={styles.modalCounter}><Text style={styles.modalCounterText}>{tasks[activeTaskIndex].count}</Text></View>
+                                    <Btn
+                                        title='+'
+                                        style={{ width: 60, height: 60 }}
+                                        onPress={incrementCount}
+                                    />
+                                </>
                             )}
                         </View>
                     </BottomSheetModal>
@@ -228,7 +190,7 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
 const styles = StyleSheet.create({
 
     content: {
-        flexDirection: "row",
+        // flexDirection: "row",
         flexWrap: "wrap",
         gap: 16,
         backgroundColor: "#fff",
@@ -271,23 +233,5 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#333",
         textAlign: 'center',
-    },
-    dayButton: {
-        padding: 10,
-        margin: 5,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: '#ccc',
-    },
-    selectedDayButton: {
-        backgroundColor: '#007bff',
-        borderColor: '#007bff',
-        color: '#ffffff',
-    },
-    dayButtonText: {
-        color: '#000',
-    },
-    selectedDayButtonText: {
-        color: '#fff',
     },
 });

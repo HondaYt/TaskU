@@ -54,13 +54,11 @@ export default function AttributeBtn({ title, onPress, selected, icon }: attribu
         <TouchableOpacity
             activeOpacity={1}
             style={[styles.attributeBtn, selected && styles.selected]}
-            onPress={onPress}
+            onPress={handlePress}
         >
 
             <View style={{ position: 'absolute', top: -36, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' }}>
                 {icon}
-
-                {/* <LivingAloneImg height={buttonSize / 2} width={buttonSize / 2} /> */}
             </View>
             <View onLayout={(e) => {
                 const { width } = e.nativeEvent.layout;
@@ -83,8 +81,8 @@ export default function AttributeBtn({ title, onPress, selected, icon }: attribu
                 :
                 <>
 
-                    <Octicons name="check-circle" size={28} color="#fff" style={{ position: 'absolute', top: 8, right: 8 }} />
-                    <Octicons name="check-circle-fill" size={28} color="#67DD73" style={{ position: 'absolute', top: 8, right: 8 }} />
+                    <Octicons name="check-circle" size={28} color="#fff" style={{ position: 'absolute', top: 5, right: 5 }} />
+                    <Octicons name="check-circle-fill" size={28} color="#67DD73" style={{ position: 'absolute', top: 5, right: 5 }} />
                 </>
             }
         </TouchableOpacity>
@@ -94,15 +92,23 @@ export default function AttributeBtn({ title, onPress, selected, icon }: attribu
 const styles = StyleSheet.create({
     attributeBtn: {
         backgroundColor: "#fff",
-        borderColor: "#888",
-        borderWidth: 3,
+        // borderColor: "#888",
         width: buttonSize, // 正方形の幅
         height: buttonSize, // 正方形の高さ
         padding: 10,
         borderRadius: 16,
         justifyContent: 'flex-end', // 子要素を中央に配置
         alignItems: 'flex-end', // 子要素を中央に配置
-        overflow: 'hidden',
+        // overflow: 'hidden',
+        // 影をつける
+        shadowColor: '#ccc',
+        shadowOpacity: 1,
+        shadowRadius: 4,
+        shadowOffset: {
+            width: 0,
+            height: 0
+        },
+
     },
     text: {
         color: "#333",
@@ -111,8 +117,10 @@ const styles = StyleSheet.create({
         // fontSize: 30,
     },
     selected: {
-        backgroundColor: "#eee", // 押されたときの背景色
-        borderColor: "#333", // 押されたときの境界線の色
+        padding: 7,
+        borderWidth: 3,
+        // backgroundColor: "#eee", // 押されたときの背景色
+        borderColor: "#67DD73", // 押されたときの境界線の色
         // 他に変更したいスタイルがあればここに追加
     },
 });

@@ -19,17 +19,19 @@ export default function Register({ navigation }: any) {
 
     // コンテンツのリストを定義
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+    const [livingCategory, setLivingCategory] = useState('');
+    const [statusCategory, setStatusCategory] = useState('');
     const contents = [
-        <Input1 />,
-        <Input2 setIsButtonDisabled={setIsButtonDisabled} />,
-        <Input3 setIsButtonDisabled={setIsButtonDisabled} />,
+        // <Input1 />,
+        <Input2 setIsButtonDisabled={setIsButtonDisabled} setLivingCategory={setLivingCategory} setStatusCategory={setStatusCategory} />,
+        <Input3 setIsButtonDisabled={setIsButtonDisabled} livingCategory={livingCategory} statusCategory={statusCategory} />,
         <Complete />,
     ];
     // 現在のコンテンツのインデックスを追跡するための状態
     const [currentIndex, setCurrentIndex] = useState(0);
     const progressTexts = [
-        `プロフィールを更新しましょう。`,
-        `次に、あなたのことを${"\n"}教えてください！`,
+        // `プロフィールを更新しましょう。`,
+        `まずは、あなたのことを${"\n"}教えてください！`,
         `あなたに最適な${"\n"}テンプレートはこちらです。`,
         "登録が完了しました。"
     ];
@@ -38,7 +40,9 @@ export default function Register({ navigation }: any) {
     useEffect(() => {
         setProgressText(progressTexts[currentIndex]);
     }, [currentIndex]);
-
+    useEffect(() => {
+        console.log(livingCategory, statusCategory);
+    }, [livingCategory, statusCategory]);
     // 次のコンテンツに切り替える関数
     const handleNext = () => {
         setCurrentIndex(prevIndex => {

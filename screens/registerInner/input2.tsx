@@ -24,17 +24,14 @@ const { width } = Dimensions.get('window');
 // ボタンの幅（または高さ）を計算
 const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
 
-interface RegisterInput1Props {
+interface RegisterInput2Props {
     setIsButtonDisabled: (disabled: boolean) => void;
+    setLivingCategory: (category: string) => void;
+    setStatusCategory: (category: string) => void;
 }
 
-export default function registerInput1({ setIsButtonDisabled }: RegisterInput1Props) {
+export default function registerInput2({ setIsButtonDisabled, setLivingCategory, setStatusCategory }: RegisterInput2Props) {
     const [selectedAttributes, setSelectedAttributes] = useState<{ [category: string]: string | undefined }>({});
-
-    useEffect(() => {
-        // 'living' 属性が選択されている場合のみボタンを有効にする
-        setIsButtonDisabled(!selectedAttributes['living']);
-    }, [selectedAttributes, setIsButtonDisabled]);
 
     // 属性とそのカテゴリのマッピング
     const attributes = {
@@ -55,22 +52,34 @@ export default function registerInput1({ setIsButtonDisabled }: RegisterInput1Pr
         // 他の属性に対するアイコンも同様に追加
     };
 
+    useEffect(() => {
+        // 'living' 属性が選択されている場合のみボタンを有効にする
+        setIsButtonDisabled(!selectedAttributes['living']);
+    }, [selectedAttributes, setIsButtonDisabled]);
+
+    // 選択された属性に基づいて親コンポーネントの状態を更新する
+    useEffect(() => {
+        const living = selectedAttributes['living'];
+        const status = selectedAttributes['status'];
+
+        setLivingCategory(living || '');
+        setStatusCategory(status || '');
+
+        // livingが選択されていない場合、statusもリセットする
+        if (!living) {
+            setStatusCategory('');
+        }
+    }, [selectedAttributes]);
+
+    // 属性選択のハンドラーは、ローカル状態のみを更新する
     const handleAttributePress = (category: string, attribute: string) => {
         setSelectedAttributes(prevSelectedAttributes => {
             const newAttributes = { ...prevSelectedAttributes };
             const isAlreadySelected = prevSelectedAttributes[category] === attribute;
             newAttributes[category] = isAlreadySelected ? undefined : attribute;
-
-            // 'living' カテゴリの選択を解除した場合、'status' カテゴリもクリアする
-            if (category === 'living' && isAlreadySelected) {
-                newAttributes['status'] = undefined;
-            }
-
             return newAttributes;
         });
     };
-
-
 
     const statusFadeAnim = useRef(new Animated.Value(0)).current; // 初期値は0（透明）
 
@@ -157,16 +166,6 @@ const styles = StyleSheet.create({
         // flex: 1,
         backgroundColor: "#fff",
         flexGrow: 1,
-    },
-    attributeBtn: {
-        backgroundColor: "#fff",
-        borderColor: "#333",
-        borderWidth: 3,
-        width: buttonSize, // 正方形の幅
-        height: buttonSize, // 正方形の高さ
-        borderRadius: 16,
-        justifyContent: 'center', // 子要素を中央に配置
-        alignItems: 'center', // 子要素を中央に配置
     },
     option: {
         flexDirection: 'row',

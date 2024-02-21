@@ -21,39 +21,67 @@ import Welcome from 'screens/Welcome'
 import Btn from 'components/Btn'
 import AttributeBtn from 'components/AttributeBtn'
 
+const { width } = Dimensions.get('window');
+// ボタンの幅（または高さ）を計算
+const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマージンを引いた値
+
 type tempChildProps = {
-    count: number,
+    days: string[],
+    // count: number,
     todo: string,
     onEditPress: () => void,
 }
-export default function TempChild({ count, todo, onEditPress }: tempChildProps) {
+export default function TempChild({ days, todo, onEditPress }: tempChildProps) {
 
     return (
         <>
-            <View style={styles.tempInfo}>
-                <Text style={styles.tempInfoText}>
-                    週に<Text style={styles.tempInfoCount}>{count}</Text>回、{todo}をする。
-                </Text>
-                <Btn
+            <TouchableOpacity
+                style={styles.tempInfo}
+                onPress={onEditPress}
+                activeOpacity={0.8}
+            >
+                <Text style={styles.title}>{todo}</Text>
+                <Text style={styles.days}>{days?.join(',')}</Text>
+                {/* <Btn
                     title='編集'
-                    onPress={onEditPress}
                     style={{
                         width: 60, height: 50,
                     }}
-                />
-            </View>
+                /> */}
+            </TouchableOpacity>
         </>
     );
 }
 
 const styles = StyleSheet.create({
     tempInfo: {
-        flexDirection: "row",
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        // backgroundColor: "tomato",
-        flex: 1,
-        width: '100%',
+        backgroundColor: "#fff",
+        width: buttonSize, // 正方形の幅
+        // height: buttonSize / 2, // 正方形の高さ
+        padding: 10,
+        borderRadius: 10,
+        justifyContent: 'flex-start', // 子要素を中央に配置
+        alignItems: 'flex-start', // 子要素を中央に配置
+        // overflow: 'hidden',
+        // 影をつける
+        shadowColor: '#ccc',
+        shadowOpacity: 1,
+        shadowRadius: 4,
+        shadowOffset: {
+            width: 0,
+            height: 0
+        },
+
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: "500",
+        flexShrink: 1,
+    },
+    days: {
+        fontSize: 14,
+        fontWeight: "400",
+        color: '#555',
     },
     tempInfoText: {
         fontSize: 18,

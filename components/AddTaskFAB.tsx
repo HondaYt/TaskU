@@ -94,21 +94,21 @@ const AddTaskFAB = () => {
         outputRange: ['0deg', '135deg'],
     });
 
-    const [modalHeight, setModalHeight] = useState(); // モーダルの高さの状態を追加
+    // const [modalHeight, setModalHeight] = useState(); // モーダルの高さの状態を追加
 
-    useEffect(() => {
-        // const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
-        //     setModalHeight(350); // キーボード表示時にモーダルの高さを60に設定
-        // });
-        // const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-        //     setModalHeight(380); // キーボード非表示時にモーダルの高さを元に戻す
-        // });
+    // useEffect(() => {
+    //     const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+    //         setModalHeight(350); // キーボード表示時にモーダルの高さを60に設定
+    //     });
+    //     const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+    //         setModalHeight(380); // キーボード非表示時にモーダルの高さを元に戻す
+    //     });
 
-        //     return () => {
-        //         keyboardDidShowListener.remove();
-        //         keyboardDidHideListener.remove();
-        //     };
-    }, []);
+    //         return () => {
+    //             keyboardDidShowListener.remove();
+    //             keyboardDidHideListener.remove();
+    //         };
+    // }, []);
 
 
     const [searchText, setSearchText] = useState('');
@@ -132,65 +132,98 @@ const AddTaskFAB = () => {
         setSearchText('');
     };
 
+
+    const [isGenreFocus, setIsGenreFocus] = useState(false);
+    const [isPriorityFocus, setIsPriorityFocus] = useState(false);
+
+    const renderGenreLabel = () => {
+        if (genre !== '' || isGenreFocus) {
+            return (
+                <Text style={[styles.dropdownLabel, isGenreFocus && { color: '#764bda' }]}>
+                    ジャンル
+                </Text>
+            );
+        }
+        return null;
+    };
+    const renderPriorityLabel = () => {
+        if (priority !== '' || isPriorityFocus) {
+            return (
+                <Text style={[styles.dropdownLabel, isPriorityFocus && { color: '#764bda' }]}>
+                    優先度
+                </Text>
+            );
+        }
+        return null;
+    };
+
     return (
         <TouchableOpacity activeOpacity={1} onPress={toggleFAB} style={[styles.container, isOpen ? styles.expandedContainer : null]}>
             {isOpen && (
                 <TouchableOpacity
-                    style={[styles.modal, { height: modalHeight }]}
+                    style={[styles.modal]}
                     activeOpacity={1}
                     onPress={() => { }}
                 >
-                    <View style={{ gap: 8 }}>
+                    <View style={{ gap: 16 }}>
                         <TextInput
+                            mode="outlined"
                             label="タスク名"
                             value={title}
                             onChangeText={title => setTitle(title)}
-                            contentStyle={{ backgroundColor: '#fff' }}
-
+                            outlineStyle={styles.input}
+                            activeOutlineColor='#764bda'
                         />
-                        <Dropdown
-                            style={styles.dropdown}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            iconStyle={styles.iconStyle}
-                            data={itemsForGenre}
-                            search
-                            labelField="label"
-                            valueField="value"
-                            placeholder="ジャンル"
-                            searchPlaceholder="Search..."
-                            value={genre}
-                            maxHeight={280}
-                            onChange={item => {
-                                setGenre(item.value);
-                            }}
-                            renderLeftIcon={() => (
-                                // <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
-                                <Octicons name="duplicate" size={20} color="#333" style={{ marginHorizontal: 8 }} />
-                            )}
-                            renderInputSearch={(onSearch) => (
-                                <View style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 }}>
-                                    <TextInput
-                                        style={{ flex: 1, height: 40 }}
-                                        placeholder="検索と追加"
-                                        onChangeText={(text) => {
-                                            setSearchText(text);
-                                            onSearch(text);
-                                        }}
-                                        value={searchText}
-                                        contentStyle={{ backgroundColor: '#fff' }}
+                        <View style={styles.dropdownContainer}>
+                            {renderGenreLabel()}
+                            <Dropdown
+                                style={[styles.dropdown, isGenreFocus && { borderColor: '#764bda' }]}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                iconStyle={styles.iconStyle}
+                                data={itemsForGenre}
+                                search
+                                labelField="label"
+                                valueField="value"
+                                placeholder={!isGenreFocus ? 'ジャンル' : ''}
+                                searchPlaceholder="Search..."
+                                value={genre}
+                                maxHeight={280}
+                                onFocus={() => setIsGenreFocus(true)}
+                                onBlur={() => setIsGenreFocus(false)}
+                                onChange={item => {
+                                    setGenre(item.value);
+                                }}
+                                renderLeftIcon={() => (
+                                    <Octicons name="duplicate" size={20} color="#333" style={{ marginHorizontal: 8 }} />
+                                )}
+                                renderInputSearch={(onSearch) => (
+                                    <View style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 }}>
+                                        <TextInput
+                                            mode="outlined"
+                                            // style={{ flex: 1, height: 40 }}
+                                            placeholder="検索と追加"
+                                            onChangeText={(text) => {
+                                                setSearchText(text);
+                                                onSearch(text);
+                                            }}
+                                            value={searchText}
+                                            // contentStyle={{ backgroundColor: '#fff' }}
+                                            outlineStyle={styles.input}
+                                            style={{ flex: 1, height: 40 }}
 
-                                    />
-                                    <TouchableOpacity style={{ width: 60, height: 40, justifyContent: 'center', alignItems: 'center', backgroundColor: '#888', borderRadius: 8 }} onPress={handleAddGenre}>
-                                        <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>追加</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                        />
+                                        <TouchableOpacity style={{ width: 60, height: 40, justifyContent: 'center', alignItems: 'center', backgroundColor: '#888', borderRadius: 8 }} onPress={handleAddGenre}>
+                                            <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>追加</Text>
+                                        </TouchableOpacity>
+                                    </View>
 
-                            )}
-                        />
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                                <Text>期限</Text>
+                                )}
+                            />
+                        </View>
+                        <View style={{ flexDirection: 'row', gap: 16, alignItems: 'flex-end' }}>
+                            <View style={{ gap: 4, alignItems: 'flex-start' }}>
+                                <Text style={{ color: '#333', fontSize: 12 }}>期限</Text>
                                 <DateTimePicker
                                     testID="dateTimePicker"
                                     value={deadline}
@@ -199,34 +232,45 @@ const AddTaskFAB = () => {
                                     display="default"
                                     onChange={onChange}
                                     locale={languageTag}
+                                    style={{ width: 110 }}
                                 />
                             </View>
                             <TextInput
+                                mode="outlined"
                                 onChangeText={setTimeRequired}
                                 value={time_required}
                                 label="所要時間"
                                 keyboardType="numeric"
-                                contentStyle={{ backgroundColor: '#fff' }}
-                                style={{ flex: 1, }}
+                                outlineStyle={styles.input}
+                                style={{ flex: 1 }}
+                                activeOutlineColor='#764bda'
+
                             />
                         </View>
-                        <Dropdown
-                            style={styles.dropdown}
-
-                            data={itemsForPriority}
-                            labelField="label"
-                            valueField="value"
-                            placeholder="優先度を選択"
-                            value={priority}
-                            onChange={item => {
-                                setPriority(item.value);
-                            }}
-                        />
-
-                        <Button
+                        <View style={styles.dropdownContainer}>
+                            {renderPriorityLabel()}
+                            <Dropdown
+                                style={[styles.dropdown, isPriorityFocus && { borderColor: '#764bda' }]}
+                                placeholderStyle={styles.placeholderStyle}
+                                selectedTextStyle={styles.selectedTextStyle}
+                                iconStyle={styles.iconStyle}
+                                data={itemsForPriority}
+                                labelField="label"
+                                valueField="value"
+                                placeholder="優先度"
+                                value={priority}
+                                onFocus={() => setIsPriorityFocus(true)}
+                                onBlur={() => setIsPriorityFocus(false)}
+                                onChange={item => {
+                                    setPriority(item.value);
+                                }}
+                            />
+                        </View>
+                        <Btn
                             onPress={handleAddTask}
                             title="タスクを追加"
-                            color="#841584" />
+                            style={{ backgroundColor: '#764bda' }}
+                        />
                     </View>
                 </TouchableOpacity>
             )
@@ -252,13 +296,24 @@ const AddTaskFAB = () => {
 const styles = StyleSheet.create({
     dropdown: {
         height: 50,
-        borderColor: 'gray',
+        borderColor: '#888',
         borderWidth: 0.5,
         borderRadius: 8,
         paddingHorizontal: 8,
     },
-    icon: {
-        marginRight: 5,
+    dropdownContainer: {
+        backgroundColor: 'white',
+        // padding: 16,
+    },
+    dropdownLabel: {
+        position: 'absolute',
+        backgroundColor: 'white',
+        left: 8,
+        top: -8,
+        zIndex: 999,
+        paddingHorizontal: 8,
+        fontSize: 12,
+        fontWeight: '400',
     },
     placeholderStyle: {
         fontSize: 16,
@@ -270,13 +325,19 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
     },
-    input: {
-        width: '100%',
+    inputSearchStyle: {
         height: 40,
-        // margin: 12,
-        marginVertical: 8,
-        borderWidth: 1,
-        padding: 10,
+        fontSize: 16,
+    },
+    icon: {
+        marginRight: 5,
+    },
+    input:
+    {
+        // borderColor: '#888',
+        borderWidth: 0.5,
+        backgroundColor: '#fff',
+        borderRadius: 8
     },
     modal: {
         width: 340,
@@ -285,13 +346,12 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         borderRadius: 16,
         shadowColor: '#000',
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
         shadowOffset: {
             width: 0,
-            height: 0,
+            height: 0
         },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
     },
     container: {
         borderRadius: 100,
@@ -331,7 +391,6 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     label: {
-
         justifyContent: 'center',
         color: 'white',
         width: 100,
