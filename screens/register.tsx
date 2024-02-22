@@ -22,7 +22,7 @@ export default function Register({ navigation }: any) {
     const [livingCategory, setLivingCategory] = useState('');
     const [statusCategory, setStatusCategory] = useState('');
     const contents = [
-        // <Input1 />,
+        <Input1 />,
         <Input2 setIsButtonDisabled={setIsButtonDisabled} setLivingCategory={setLivingCategory} setStatusCategory={setStatusCategory} />,
         <Input3 setIsButtonDisabled={setIsButtonDisabled} livingCategory={livingCategory} statusCategory={statusCategory} />,
         <Complete />,
@@ -30,7 +30,7 @@ export default function Register({ navigation }: any) {
     // 現在のコンテンツのインデックスを追跡するための状態
     const [currentIndex, setCurrentIndex] = useState(0);
     const progressTexts = [
-        // `プロフィールを更新しましょう。`,
+        `プロフィールの更新。`,
         `まずは、あなたのことを${"\n"}教えてください！`,
         `あなたに最適な${"\n"}テンプレートはこちらです。`,
         "登録が完了しました。"

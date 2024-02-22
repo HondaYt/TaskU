@@ -27,11 +27,12 @@ const buttonSize = width / 2 - 16 - 8; // 画面幅の半分から余白とマ�
 
 type tempChildProps = {
     days: string[],
+    time_required: number,
     // count: number,
     todo: string,
     onEditPress: () => void,
 }
-export default function TempChild({ days, todo, onEditPress }: tempChildProps) {
+export default function TempChild({ days, time_required, todo, onEditPress }: tempChildProps) {
 
     return (
         <>
@@ -42,6 +43,7 @@ export default function TempChild({ days, todo, onEditPress }: tempChildProps) {
             >
                 <Text style={styles.title}>{todo}</Text>
                 <Text style={styles.days}>{days?.join(',')}</Text>
+                <Text style={styles.days}>所要時間:{time_required}分</Text>
                 {/* <Btn
                     title='編集'
                     style={{

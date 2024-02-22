@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { TextInput } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useTimer } from 'components/TimerContext';
 import {
@@ -54,46 +55,78 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
     const initialTasks = useMemo(() => {
         if (livingCategory === '一人暮らし') {
             if (statusCategory === '学生') {
-                return [{ name: '洗濯', days: ['月', '水', '土'] },
-                { name: '掃除', days: ['日'] }];
+                return [{ name: '洗濯', days: ['月', '水', '土'], time_required: 20 },
+                { name: '掃除', days: ['日'], time_required: 30 }];
             }
             else if (statusCategory === '社会人') {
-                return [{ name: '洗濯', days: ['水', '土'] },
-                { name: '掃除', days: ['日', '木'] }];
+                return [{ name: '洗濯', days: ['水', '土'], time_required: 30 },
+                { name: '掃除', days: ['日', '木'], time_required: 30 }];
             }
             else if (statusCategory === '主婦・主夫') {
-                return [{ name: '洗濯', days: ['土', '月', '水', '金'] },
-                { name: '掃除', days: ['日', '火', '木'] }];
+                return [{ name: '洗濯', days: ['土', '月', '水', '金'], time_required: 40 },
+                { name: '掃除', days: ['日', '火', '木'], time_required: 30 }];
             }
-            return [{ name: '洗濯', days: ['月', '水', '土'] },
-            { name: '掃除', days: ['日', '木'] }];
+            return [{ name: '洗濯', days: ['月', '水', '土'], time_required: 30 },
+            { name: '掃除', days: ['日', '木'], time_required: 30 }];
         }
 
         else if (livingCategory === '同居中') {
             if (statusCategory === '学生') {
-                return [{ name: '洗濯', days: [] },
-                { name: '掃除', days: [] }];
+                return [{ name: '洗濯', days: [], time_required: 0 },
+                { name: '掃除', days: [], time_required: 0 }];
             }
             else if (statusCategory === '社会人') {
-                return [{ name: '洗濯', days: ['土', '水'] },
-                { name: '掃除', days: ['日', '木'] }];
+                return [{ name: '洗濯', days: ['土', '水'], time_required: 30 },
+                { name: '掃除', days: ['日', '木'], time_required: 30 }];
             }
             else if (statusCategory === '主婦・主夫') {
-                return [{ name: '洗濯', days: ['土', '月', '水', '金'] },
-                { name: '掃除', days: ['日', '火', '木'] }];
+                return [{ name: '洗濯', days: ['土', '月', '水', '金'], time_required: 40 },
+                { name: '掃除', days: ['日', '火', '木'], time_required: 30 }];
             }
-            return [{ name: '洗濯', days: ['土', '月', '水'] },
-            { name: '掃除', days: ['日', '木'] }];
+            return [{ name: '洗濯', days: ['土', '月', '水', '金'], time_required: 30 },
+            { name: '掃除', days: ['日', '火', '木'], time_required: 30 }];
         }
-        return [{ name: '洗濯', days: [] },
-        { name: '掃除', days: [] }];
+        return [{ name: '洗濯', days: [], time_required: 0 },
+        { name: '掃除', days: [], time_required: 0 }];
     }, [livingCategory, statusCategory]);
 
     const [livingTasks, setLivingTasks] = useState(initialTasks);
 
-
-
     const [activeTaskIndex, setActiveTaskIndex] = useState<number | null>(null);
+
+    const [taskName, setTaskName] = useState('');
+    const [timeRequired, setTimeRequired] = useState(0);
+
+    useEffect(() => {
+        if (activeTaskIndex !== null) {
+            const activeTask = livingTasks[activeTaskIndex];
+            setTaskName(activeTask.name);
+            setTimeRequired(activeTask.time_required);
+        }
+    }, [activeTaskIndex, livingTasks]);
+
+    const handleTaskNameChange = (text: string) => {
+        setTaskName(text);
+    };
+
+    const handleTimeRequiredChange = (number: number) => {
+        setTimeRequired(number);
+    };
+
+    const saveTaskChanges = () => {
+        setLivingTasks(currentTasks => currentTasks.map((task, index) => {
+            if (index === activeTaskIndex) {
+                return {
+                    ...task,
+                    name: taskName,
+                    time_required: timeRequired,
+                };
+            }
+            return task;
+        }));
+        bottomSheetModalRef.current?.dismiss();
+    };
+
 
     const handlePresentModalPress = useCallback((index: number) => {
         setActiveTaskIndex(index);
@@ -140,7 +173,7 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
                     <ScrollView contentContainerStyle={styles.content}>
                         <View style={styles.wrap}>
                             {livingTasks.map((task, index) => (
-                                <TempChild key={index} days={task.days} todo={task.name} onEditPress={() => handlePresentModalPress(index)} />
+                                <TempChild key={index} days={task.days} todo={task.name} time_required={task.time_required} onEditPress={() => handlePresentModalPress(index)} />
                             ))}
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", gap: 8, alignItems: "center" }}>
@@ -175,7 +208,7 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
                         detached={true}
                         ref={bottomSheetModalRef}
                         index={0}
-                        snapPoints={['25%']}
+                        snapPoints={[200]}
                         backgroundStyle={{
                             borderBottomEndRadius: 0,
                             borderBottomStartRadius: 0,
@@ -189,31 +222,53 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
                             shadowRadius: 6,
                             elevation: 5,
                         }}
+                    // keyboardBehavior='fillParent'
                     >
                         <View style={styles.modalContainer}>
                             {activeTaskIndex !== null && (
                                 <View style={styles.modalContainer}>
                                     {activeTaskIndex !== null && (
-                                        <>
-                                            {dayOfWeek.map((day) => (
-                                                <TouchableOpacity
-                                                    key={day}
-                                                    activeOpacity={0.8}
-                                                    style={[
-                                                        styles.dayButton,
-                                                        livingTasks[activeTaskIndex].days.includes(day) && styles.selectedDayButton
-                                                    ]}
-                                                    onPress={() => toggleDaySelection(day)}
-                                                >
-                                                    <Text style={[
-                                                        styles.dayButtonText,
-                                                        livingTasks[activeTaskIndex].days.includes(day) && styles.selectedDayButtonText
-                                                    ]}>
-                                                        {day}
-                                                    </Text>
-                                                </TouchableOpacity>
-                                            ))}
-                                        </>
+                                        <View style={{ justifyContent: "center" }}>
+                                            <TextInput
+                                                mode="outlined"
+                                                outlineStyle={styles.input}
+                                                style={{ flex: 1 }}
+                                                onChangeText={handleTaskNameChange}
+                                                value={taskName}
+                                                label="タスク名"
+                                                activeOutlineColor='#764bda'
+                                            />
+                                            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                                                {dayOfWeek.map((day) => (
+                                                    <TouchableOpacity
+                                                        key={day}
+                                                        activeOpacity={0.8}
+                                                        style={[
+                                                            styles.dayButton,
+                                                            livingTasks[activeTaskIndex].days.includes(day) && styles.selectedDayButton
+                                                        ]}
+                                                        onPress={() => toggleDaySelection(day)}
+                                                    >
+                                                        <Text style={[
+                                                            styles.dayButtonText,
+                                                            livingTasks[activeTaskIndex].days.includes(day) && styles.selectedDayButtonText
+                                                        ]}>
+                                                            {day}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </View>
+                                            <TextInput
+                                                mode="outlined"
+                                                outlineStyle={styles.input}
+                                                style={{ height: 48, }}
+                                                onChangeText={(text) => handleTimeRequiredChange(Number(text))}
+                                                value={timeRequired.toString()}
+                                                keyboardType="numeric"
+                                                label="所要時間（分）"
+                                                activeOutlineColor='#764bda'
+                                            />
+                                        </View>
                                     )}
                                 </View>
                             )}
@@ -226,7 +281,12 @@ export default function registerInput3({ setIsButtonDisabled, livingCategory, st
 }
 
 const styles = StyleSheet.create({
-
+    input: {
+        borderWidth: 0.5,
+        backgroundColor: '#fff',
+        borderRadius: 8,
+        height: 48,
+    },
     content: {
         flexDirection: "row",
         flexWrap: "wrap",
@@ -235,6 +295,7 @@ const styles = StyleSheet.create({
         padding: 16,
         // flexGrow: 1,
     },
+
     wrap: {
         flexDirection: "row",
         flexWrap: "wrap",
@@ -254,7 +315,7 @@ const styles = StyleSheet.create({
         alignItems: 'center', // 子要素を中央に配置
     },
     modalContainer: {
-        flexDirection: 'row',
+        // flexDirection: 'row',
         // backgroundColor: '#ddd',
         flex: 1,
         justifyContent: 'center',
@@ -280,8 +341,8 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
     selectedDayButton: {
-        backgroundColor: '#007bff',
-        borderColor: '#007bff',
+        backgroundColor: '#764bda',
+        borderColor: '#764bda',
         color: '#ffffff',
     },
     dayButtonText: {
